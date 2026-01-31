@@ -4,6 +4,29 @@
 
 ---
 
+## 2026-01-31 - Fix Cloudflare Pages Build
+
+### Problema
+Build no Cloudflare Pages falhando com erro de WASM do Prisma:
+```
+Module parse failed: Unexpected character '' (1:0)
+The module seem to be a WebAssembly module...
+```
+
+### Correções Aplicadas
+- **Edge Runtime removido** de `api/habits/route.ts` - causava bundling do Prisma WASM
+- **Type assertions** adicionadas em todos os `.json()` calls (38+ arquivos) para compatibilidade com TypeScript strict mode
+- **SQLite fix** - substituído `createMany` por loop de `create` em `api/routines/[id]/route.ts`
+- **ESLint fix** - escapado aspas em `Settings.tsx` (`"` → `&quot;`)
+- **Case fix** - `Z_INDEX.MODAL` → `Z_INDEX.modal` em modais
+- **D1 adapter removido** - simplificado `lib/db.ts` (versão incompatível)
+
+### Resultado
+✅ Build local passando com sucesso
+✅ Push para Cloudflare Pages pronto para deploy
+
+---
+
 ## 2026-01-31 - BiriRotina: Sistema de Rotinas
 
 ### Implementado
