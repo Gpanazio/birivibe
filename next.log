@@ -234,3 +234,13 @@ Import trace for requested module:
  ✓ Compiled in 84ms (293 modules)
  ✓ Compiled in 100ms (681 modules)
  ✓ Compiled in 95ms (293 modules)
+ ✓ Compiled in 402ms (332 modules)
+ ✓ Compiled in 107ms (334 modules)
+ ⚠ Found a change in next.config.js. Restarting the server to apply the changes...
+Using vars defined in .env
+  ▲ Next.js 14.2.32
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 2.8s

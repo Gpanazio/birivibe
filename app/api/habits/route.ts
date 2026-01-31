@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { getDbFromContext } from "@/lib/db";
 
 // GET /api/habits - lista todos os hábitos do usuário
 export async function GET(req: NextRequest) {
   try {
+    const db = await getDbFromContext();
+    
     const user = await db.user.findFirst();
     if (!user) {
       return NextResponse.json([], { status: 200 });
@@ -24,6 +26,7 @@ export async function GET(req: NextRequest) {
 // POST /api/habits - cria novo hábito
 export async function POST(req: NextRequest) {
   try {
+    const db = await getDbFromContext();
     const body = await req.json();
 
     let user = await db.user.findFirst();
@@ -54,3 +57,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to create habit" }, { status: 500 });
   }
 }
+
+export const runtime = "edge";

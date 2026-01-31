@@ -3,7 +3,6 @@
 declare global {
   interface CloudflareEnv {
     DB: D1Database
-    NODE_ENV: string
   }
 }
 
