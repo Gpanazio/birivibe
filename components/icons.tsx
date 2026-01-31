@@ -20,7 +20,7 @@ import {
 } from "react-icons/bs"
 import { FaRegStar, FaSort, FaUserAlt } from "react-icons/fa"
 import { ImSpinner8, ImStatsBars } from "react-icons/im"
-import { LuSettings } from "react-icons/lu"
+import { LuSettings, LuClock, LuUtensilsCrossed } from "react-icons/lu"
 import { MdDeleteForever, MdOutlineLogout } from "react-icons/md"
 import { RxDashboard, RxMixerHorizontal } from "react-icons/rx"
 
@@ -67,6 +67,8 @@ const icons = {
   mixer: RxMixerHorizontal,
   check: BsCheck2,
   star: FaRegStar,
+  clock: LuClock,
+  utensils: LuUtensilsCrossed,
 }
 
 export const Icons: IconsType = icons

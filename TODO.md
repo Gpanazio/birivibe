@@ -4,31 +4,12 @@
 
 ---
 
-## Em Andamento: Módulo de Rotinas
+## Concluído: Módulo de Rotinas
 
-### 1. Seed de Rotinas de Exemplo
-Criar em `prisma/seed-routines.ts`:
-- **Rotina Matinal** (type: morning): Acordar, Água, Remédios, Skincare, Café
-- **Rotina Noturna** (type: evening): Desligar telas, Skincare noite, Leitura, Meditação
-- **Rotina de Trabalho** (type: work): Revisar agenda, Deep work 90min, Pausa, Emails
-- **Rotina de Treino** (type: workout): Aquecimento, Treino principal, Alongamento, Shake
-
-### 2. Editor de Rotina (`/routines/[id]/edit`)
-- Formulário para editar nome, descrição, tipo, dias da semana
-- Builder de steps drag-and-drop
-- Cada step: nome, duração estimada, opcional linkar a um Habit existente
-- Botões: Salvar, Cancelar, Deletar rotina
-
-### 3. Player de Rotina (`/routines/[id]/play`)
-- UI step-by-step fullscreen
-- Mostrar step atual com timer
-- Botões: Completar step, Pular, Pausar
-- Barra de progresso
-- Ao finalizar: salvar RoutineLog com stepsCompleted
-
-### 4. Navegação
-- Adicionar link "Rotinas" no sidebar/menu principal
-- Ícone: Clock ou ListChecks
+- [x] **Seed de Rotinas** (`prisma/seed-routines.ts`) - 4 rotinas com 17 passos
+- [x] **Editor** (`/routines/[id]/edit`) - Builder com reorder, ícones, duração, vínculo com hábitos
+- [x] **Player** (`/routines/[id]/play`) - Timer, progresso, completar/pular, salva RoutineLog
+- [x] **Navegação** - Link "Rotinas" no dashboard sidebar com ícone clock
 
 ---
 
