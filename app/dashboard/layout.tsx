@@ -13,7 +13,7 @@ export default async function DashboardLayout({
         <div className="container flex h-14 items-center justify-between py-4">
           <div className="flex items-center gap-2">
             <span className="terminal-font text-xs font-bold text-purple-500 italic tracking-tighter">BIRIVIBE.OS</span>
-            <span className="text-[10px] text-zinc-600 uppercase tracking-widest hidden md:block">// LIFE_ENGINE_V1</span>
+            <span className="text-[10px] text-zinc-600 uppercase tracking-widest hidden md:block">{"// LIFE_ENGINE_V1"}</span>
           </div>
           <nav className="flex items-center gap-4">
              <a href="/biri" className="text-[10px] text-zinc-400 hover:text-purple-500 uppercase font-bold transition-colors">Neural_Input</a>

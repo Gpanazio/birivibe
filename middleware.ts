@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server"
+import { NextResponse, NextRequest } from "next/server"
 
-export default function middleware(req) {
+export default function middleware(req: NextRequest) {
   // LIBERAR ABSOLUTAMENTE TUDO PARA O GABRIEL
   return NextResponse.next();
 }

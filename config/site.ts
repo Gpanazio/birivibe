@@ -2,28 +2,29 @@ import { SiteConfig } from "@/types"
 
 import { env } from "@/env.mjs"
 
+const baseUrl = env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
+
 export const siteConfig: SiteConfig = {
-  name: "Iotawise",
-  author: "redpangilinan",
+  name: "BiriVibe OS",
+  author: "Gabriel Panazio",
   description:
-    "Track daily habits and monitor your progress with little effort.",
+    "Life Operating System - Track habits, diet, fitness, and more.",
   keywords: [
     "Next.js",
     "React",
     "Tailwind CSS",
-    "Radix UI",
-    "shadcn/ui",
+    "Life OS",
     "Habits",
-    "Activity",
-    "Track",
-    "Monitor",
+    "Diet",
+    "Fitness",
+    "Quantified Self",
   ],
   url: {
-    base: env.NEXT_PUBLIC_APP_URL,
-    author: "https://redpangilinan.live",
+    base: baseUrl,
+    author: "https://birivibe.com",
   },
   links: {
-    github: "https://github.com/redpangilinan/iotawise",
+    github: "https://github.com/Gpanazio/birivibe",
   },
-  ogImage: `${env.NEXT_PUBLIC_APP_URL}/og.jpg`,
+  ogImage: `${baseUrl}/og.jpg`,
 }

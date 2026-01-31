@@ -1,9 +1,7 @@
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import { NextAuthOptions } from "next-auth"
-import GithubProvider from "next-auth/providers/github"
-import GoogleProvider from "next-auth/providers/google"
+import CredentialsProvider from "next-auth/providers/credentials"
 
-import { env } from "@/env.mjs"
 import { db } from "@/lib/db"
 
 export const authOptions: NextAuthOptions = {
@@ -15,13 +13,17 @@ export const authOptions: NextAuthOptions = {
     signIn: "/signin",
   },
   providers: [
-    GoogleProvider({
-      clientId: env.GOOGLE_CLIENT_ID,
-      clientSecret: env.GOOGLE_CLIENT_SECRET,
-    }),
-    GithubProvider({
-      clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET,
+    // Auth simplificado por enquanto - pega primeiro usuário
+    CredentialsProvider({
+      name: "Dev",
+      credentials: {},
+      async authorize() {
+        const user = await db.user.findFirst();
+        if (user) {
+          return { id: user.id, name: user.name, email: user.email };
+        }
+        return null;
+      },
     }),
   ],
   callbacks: {

@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["driverAdapters"]
 }
 
@@ -8,131 +8,628 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// --- AUTH & USER ---
+// ============================================================================
+// USER & AUTH
+// ============================================================================
+
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  image         String?
-  createdAt     DateTime  @default(now())
-  
-  habits        Habit[]
-  workouts      Workout[]
-  bodyMetrics   BodyMetric[]
-  sleepLogs     SleepLog[]
+  id        String   @id @default(cuid())
+  name      String?
+  email     String?  @unique
+  image     String?
+  timezone  String   @default("America/Sao_Paulo")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Camada Base: Perfil de Saúde
+  healthConditions    HealthCondition[]
+  medications         Medication[]
+  medicationLogs      MedicationLog[]
+  allergies           Allergy[]
+  healthProfessionals HealthProfessional[]
+  appointments        Appointment[]
+
+  // Módulo 1: Rotina & Hábitos
+  habits    Habit[]
+  habitLogs HabitLog[]
+
+  // Módulo 2: Dieta & Nutrição
+  meals          Meal[]
+  foods          Food[]
+  foodLogs       FoodLog[] // logs simplificados (Biridiet)
+  nutritionGoals NutritionGoal[]
+  waterLogs      WaterLog[]
+  weightLogs     WeightLog[]
+  bodyMetrics    BodyMetric[]
+  progressPhotos ProgressPhoto[]
+
+  // Módulo 3: Exercício & Fitness
+  workouts         Workout[]
+  exercises        Exercise[]
+  workoutTemplates WorkoutTemplate[]
+
+  // Módulo 4: Sono
+  sleepLogs SleepLog[]
+
+  // Módulo 5: Saúde Mental & Humor
   moodLogs      MoodLog[]
-  focusSessions FocusSession[]
+  journalEntries JournalEntry[]
+  gratitudeLogs GratitudeLog[]
+
+  // Módulo 6: Produtividade
+  projects      Project[]
   tasks         Task[]
-  transactions  Transaction[]
+  focusSessions FocusSession[]
+  weeklyGoals   WeeklyGoal[]
+
+  // [V2] Módulo 7: Finanças
+  transactions Transaction[]
 }
 
-// --- 1. ROTINA & HÁBITOS ---
+// ============================================================================
+// CAMADA BASE: PERFIL DE SAÚDE
+// ============================================================================
+
+model HealthCondition {
+  id          String    @id @default(cuid())
+  userId      String
+  name        String // Ex: TDAH, Diabetes Tipo 2, Hipertensão
+  diagnosedAt DateTime?
+  severity    String? // leve, moderado, grave
+  notes       String?
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+
+  user        User         @relation(fields: [userId], references: [id])
+  medications Medication[]
+}
+
+model Medication {
+  id          String  @id @default(cuid())
+  userId      String
+  conditionId String?
+  name        String // Ex: Venvanse, Metformina
+  dosage      String // Ex: 50mg, 500mg
+  frequency   String // Ex: 1x dia, 2x dia, conforme necessário
+  timeOfDay   String? // Ex: manhã, noite, 08:00
+  notes       String?
+  sideEffects String?
+  active      Boolean @default(true)
+
+  user      User             @relation(fields: [userId], references: [id])
+  condition HealthCondition? @relation(fields: [conditionId], references: [id])
+  logs      MedicationLog[]
+}
+
+model MedicationLog {
+  id           String   @id @default(cuid())
+  userId       String
+  medicationId String
+  taken        Boolean  @default(true)
+  skippedReason String?
+  takenAt      DateTime @default(now())
+  date         DateTime @default(now()) // data do dia (pra query)
+
+  user       User       @relation(fields: [userId], references: [id])
+  medication Medication @relation(fields: [medicationId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+}
+
+model Allergy {
+  id       String  @id @default(cuid())
+  userId   String
+  name     String // Ex: Amendoim, Penicilina, Glúten
+  type     String // alimentar, medicamento, ambiental, outro
+  severity String // leve, moderado, grave
+  notes    String?
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model HealthProfessional {
+  id         String  @id @default(cuid())
+  userId     String
+  name       String
+  specialty  String // Psiquiatra, Nutricionista, Endocrinologista
+  phone      String?
+  email      String?
+  address    String?
+  notes      String?
+
+  user         User          @relation(fields: [userId], references: [id])
+  appointments Appointment[]
+}
+
+model Appointment {
+  id             String   @id @default(cuid())
+  userId         String
+  professionalId String?
+  specialty      String? // pra quando não tem profissional cadastrado
+  scheduledAt    DateTime
+  duration       Int? // minutos
+  notes          String?
+  completed      Boolean  @default(false)
+
+  user         User                @relation(fields: [userId], references: [id])
+  professional HealthProfessional? @relation(fields: [professionalId], references: [id])
+
+  @@index([userId, scheduledAt])
+}
+
+// ============================================================================
+// MÓDULO 1: ROTINA & HÁBITOS
+// ============================================================================
+
 model Habit {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   userId      String
   name        String
   description String?
-  category    String?  // Ex: Saúde, Mente, Grana
-  frequency   String   @default("daily") // daily, weekly, x_times
-  targetValue Int      @default(1)
-  unit        String?  // Ex: ml, paginas, min
-  color       String   @default("#8b5cf6")
-  
-  user        User     @relation(fields: [userId], references: [id])
-  logs        HabitLog[]
+  category    String? // Saúde, Mente, Corpo, Produtividade
+  frequency   String  @default("daily") // daily, weekly, x_times
+  targetDays  Int     @default(7) // pra x_times: quantas vezes por semana
+  targetValue Float   @default(1) // meta numérica (ex: 8 copos de água)
+  unit        String? // ml, páginas, minutos, etc
+  color       String  @default("#8b5cf6")
+  icon        String?
+  order       Int     @default(0) // pra ordenação
+  active      Boolean @default(true)
+  createdAt   DateTime @default(now())
+
+  user User       @relation(fields: [userId], references: [id])
+  logs HabitLog[]
 }
 
 model HabitLog {
-  id        String   @id @default(cuid())
-  habitId   String
-  value     Float    @default(1)
-  date      DateTime @default(now())
-  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  id      String   @id @default(cuid())
+  userId  String
+  habitId String
+  value   Float    @default(1)
+  notes   String?
+  date    DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id])
+  habit Habit @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+  @@index([habitId, date])
 }
 
-// --- 3. EXERCÍCIO & FITNESS ---
-model Workout {
-  id        String   @id @default(cuid())
-  userId    String
-  name      String   // Ex: Treino A, Perna, Cardio
-  duration  Int?     // minutos
-  date      DateTime @default(now())
-  exercises ExerciseLog[]
-  user      User     @relation(fields: [userId], references: [id])
+// ============================================================================
+// MÓDULO 2: DIETA & NUTRIÇÃO (Biridiet2000)
+// ============================================================================
+
+model Food {
+  id       String  @id @default(cuid())
+  userId   String? // null = banco global, preenchido = alimento do usuário
+  name     String
+  brand    String?
+  portion  Float   @default(100) // gramas por porção padrão
+  
+  // Macros
+  calories Float?
+  protein  Float?
+  carbs    Float?
+  fat      Float?
+  fiber    Float?
+  sugar    Float?
+  sodium   Float?
+  
+  // Micros
+  vitaminA Float? // mcg
+  vitaminC Float? // mg
+  vitaminD Float? // mcg
+  vitaminE Float? // mg
+  vitaminB12 Float? // mcg
+  calcium  Float? // mg
+  iron     Float? // mg
+  potassium Float? // mg
+  magnesium Float? // mg
+  zinc     Float? // mg
+  
+  favorite Boolean @default(false)
+
+  user      User?      @relation(fields: [userId], references: [id])
+  mealItems MealItem[]
+
+  @@index([name])
 }
 
-model ExerciseLog {
-  id        String   @id @default(cuid())
-  workoutId String
-  name      String   // Ex: Supino
-  sets      Int?
-  reps      Int?
-  weight    Float?   // kg
-  workout   Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+model Meal {
+  id       String   @id @default(cuid())
+  userId   String
+  type     String // café da manhã, almoço, lanche, janta
+  date     DateTime @default(now())
+  notes    String?
+  photoUrl String?
+
+  user  User       @relation(fields: [userId], references: [id])
+  items MealItem[]
+
+  @@index([userId, date])
 }
 
-// --- 4 & 5. SONO, HUMOR & VITALIDADE ---
-model SleepLog {
-  id        String   @id @default(cuid())
-  userId    String
-  bedTime   DateTime
-  wakeTime  DateTime
-  quality   Int      // 1-10
-  notes     String?
-  user      User     @relation(fields: [userId], references: [id])
+model MealItem {
+  id       String  @id @default(cuid())
+  mealId   String
+  foodId   String?
+  name     String // nome do alimento (pode ser livre)
+  portion  Float   @default(100) // gramas consumidas
+  
+  // Macros
+  calories Float?
+  protein  Float?
+  carbs    Float?
+  fat      Float?
+  fiber    Float?
+  sugar    Float?
+  
+  // Micros
+  vitaminA Float? // mcg
+  vitaminC Float? // mg
+  calcium  Float? // mg
+  iron     Float? // mg
+  
+  timestamp DateTime @default(now())
+
+  meal Meal  @relation(fields: [mealId], references: [id], onDelete: Cascade)
+  food Food? @relation(fields: [foodId], references: [id])
 }
 
-model MoodLog {
-  id        String   @id @default(cuid())
-  userId    String
-  score     Int      // 1-10
-  energy    Int      // 1-10
-  stress    Int      // 1-10
-  note      String?
-  date      DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
+model NutritionGoal {
+  id       String @id @default(cuid())
+  userId   String
+  calories Float?
+  protein  Float?
+  carbs    Float?
+  fat      Float?
+  fiber    Float?
+  water    Float? // ml por dia
+  height   Float? // cm
+  objectives String? // JSON array: ['weight_loss', 'muscle_gain']
+  intolerances String? // JSON array: ['gluten', 'lactose']
+  conditions String? // JSON array: ['lipedema', 'diabetes']
+  active   Boolean @default(true)
+
+  user User @relation(fields: [userId], references: [id])
 }
 
-// --- 6. PRODUTIVIDADE ---
-model FocusSession {
-  id        String   @id @default(cuid())
-  userId    String
-  project   String
-  duration  Int      // minutos
-  date      DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
+// FoodLog simplificado (compatível com Biridiet2000)
+// Permite log direto sem estrutura Meal/MealItem
+model FoodLog {
+  id           String   @id @default(cuid())
+  userId       String
+  name         String
+  mealCategory String? // café da manhã, almoço, lanche, janta
+  
+  // Macros
+  calories Float @default(0)
+  protein  Float @default(0)
+  carbs    Float @default(0)
+  fats     Float @default(0) // 'fats' pra compatibilidade com Biridiet
+  fiber    Float @default(0)
+  sugar    Float @default(0)
+  
+  // Micros
+  vitaminA Float @default(0) // mcg
+  vitaminC Float @default(0) // mg
+  calcium  Float @default(0) // mg
+  iron     Float @default(0) // mg
+  
+  date      String // YYYY-MM-DD
+  timestamp DateTime @default(now())
+  
+  user User @relation(fields: [userId], references: [id])
+  
+  @@index([userId, date])
 }
 
-model Task {
-  id        String   @id @default(cuid())
-  userId    String
-  title     String
-  completed Boolean  @default(false)
-  priority  Int      @default(1)
-  dueDate   DateTime?
-  user      User     @relation(fields: [userId], references: [id])
+model WaterLog {
+  id     String   @id @default(cuid())
+  userId String
+  amount Float // ml
+  date   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, date])
 }
 
-// --- 7. FINANÇAS ---
-model Transaction {
-  id          String   @id @default(cuid())
-  userId      String
-  type        String   // income, expense
-  amount      Float
-  category    String
-  description String?
-  date        DateTime @default(now())
-  user        User     @relation(fields: [userId], references: [id])
+// WeightLog (histórico de peso - usado pelo Biridiet WeightTracker)
+model WeightLog {
+  id     String   @id @default(cuid())
+  userId String
+  weight Float // kg
+  notes  String?
+  date   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, date])
 }
 
-// --- 8. MÉTRICAS CORPAIS ---
+// ============================================================================
+// MÉTRICAS CORPORAIS (sub-módulo de Dieta)
+// ============================================================================
+
 model BodyMetric {
   id        String   @id @default(cuid())
   userId    String
-  weight    Float?
-  bodyFat   Float?
-  chest     Float?
-  waist     Float?
+  weight    Float? // kg
+  bodyFat   Float? // %
+  muscle    Float? // % ou kg
+  chest     Float? // cm
+  waist     Float? // cm
+  hip       Float? // cm
+  armLeft   Float? // cm
+  armRight  Float? // cm
+  thighLeft Float? // cm
+  thighRight Float? // cm
+  notes     String?
   date      DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id])
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, date])
+}
+
+model ProgressPhoto {
+  id       String   @id @default(cuid())
+  userId   String
+  photoUrl String
+  type     String? // frente, lado, costas
+  notes    String?
+  date     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, date])
+}
+
+// ============================================================================
+// MÓDULO 3: EXERCÍCIO & FITNESS
+// ============================================================================
+
+model Exercise {
+  id          String  @id @default(cuid())
+  userId      String? // null = banco global
+  name        String
+  muscleGroup String? // peito, costas, pernas, ombros, braços, core
+  equipment   String? // barra, halteres, máquina, cabo, peso corporal
+  description String?
+  videoUrl    String?
+
+  user         User?         @relation(fields: [userId], references: [id])
+  exerciseLogs ExerciseLog[]
+  templateExercises TemplateExercise[]
+
+  @@index([name])
+  @@index([muscleGroup])
+}
+
+model Workout {
+  id         String   @id @default(cuid())
+  userId     String
+  name       String // Ex: Treino A, Peito e Tríceps
+  templateId String?
+  duration   Int? // minutos
+  notes      String?
+  rating     Int? // 1-10 como foi o treino
+  date       DateTime @default(now())
+
+  user      User          @relation(fields: [userId], references: [id])
+  template  WorkoutTemplate? @relation(fields: [templateId], references: [id])
+  exercises ExerciseLog[]
+
+  @@index([userId, date])
+}
+
+model ExerciseLog {
+  id         String @id @default(cuid())
+  workoutId  String
+  exerciseId String?
+  name       String // nome do exercício (pra caso não use o banco)
+  order      Int    @default(0)
+  sets       Int?
+  reps       Int? // ou String pra "8-12"
+  weight     Float? // kg
+  duration   Int? // segundos (pra cardio/isométricos)
+  distance   Float? // km (pra cardio)
+  notes      String?
+  rpe        Int? // Rate of Perceived Exertion 1-10
+
+  workout  Workout   @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+  exercise Exercise? @relation(fields: [exerciseId], references: [id])
+}
+
+model WorkoutTemplate {
+  id          String  @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  dayOfWeek   Int? // 0-6 (domingo-sábado)
+  order       Int     @default(0)
+
+  user      User               @relation(fields: [userId], references: [id])
+  exercises TemplateExercise[]
+  workouts  Workout[]
+}
+
+model TemplateExercise {
+  id         String @id @default(cuid())
+  templateId String
+  exerciseId String
+  order      Int    @default(0)
+  sets       Int?
+  reps       String? // "8-12" ou "10"
+  notes      String?
+
+  template WorkoutTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  exercise Exercise        @relation(fields: [exerciseId], references: [id])
+}
+
+// ============================================================================
+// MÓDULO 4: SONO
+// ============================================================================
+
+model SleepLog {
+  id       String   @id @default(cuid())
+  userId   String
+  bedTime  DateTime
+  wakeTime DateTime
+  quality  Int // 1-10
+  deep     Int? // minutos sono profundo (se tiver wearable)
+  rem      Int? // minutos sono REM
+  awakenings Int? // quantas vezes acordou
+  notes    String?
+  date     DateTime @default(now()) // data do dia que acordou
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, date])
+}
+
+// ============================================================================
+// MÓDULO 5: SAÚDE MENTAL & HUMOR
+// ============================================================================
+
+model MoodLog {
+  id       String   @id @default(cuid())
+  userId   String
+  mood     Int // 1-10 (humor geral)
+  energy   Int // 1-10
+  stress   Int? // 1-10
+  anxiety  Int? // 1-10
+  focus    Int? // 1-10
+  note     String?
+  date     DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, date])
+}
+
+model JournalEntry {
+  id      String   @id @default(cuid())
+  userId  String
+  title   String?
+  content String
+  mood    Int? // 1-10 opcional
+  tags    String? // comma-separated
+  date    DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, date])
+}
+
+model GratitudeLog {
+  id     String   @id @default(cuid())
+  userId String
+  item1  String
+  item2  String?
+  item3  String?
+  date   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, date])
+}
+
+// ============================================================================
+// MÓDULO 6: PRODUTIVIDADE & TEMPO
+// ============================================================================
+
+model Project {
+  id          String  @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  color       String  @default("#8b5cf6")
+  active      Boolean @default(true)
+  archived    Boolean @default(false)
+  createdAt   DateTime @default(now())
+
+  user          User           @relation(fields: [userId], references: [id])
+  tasks         Task[]
+  focusSessions FocusSession[]
+}
+
+model Task {
+  id          String    @id @default(cuid())
+  userId      String
+  projectId   String?
+  title       String
+  description String?
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  priority    Int       @default(2) // 1=baixa, 2=média, 3=alta, 4=urgente
+  dueDate     DateTime?
+  dueTime     String? // "14:00"
+  estimatedMin Int? // minutos estimados
+  actualMin   Int? // minutos reais
+  tags        String? // comma-separated
+  order       Int       @default(0)
+  createdAt   DateTime  @default(now())
+
+  user    User     @relation(fields: [userId], references: [id])
+  project Project? @relation(fields: [projectId], references: [id])
+
+  @@index([userId, completed])
+  @@index([userId, dueDate])
+}
+
+model FocusSession {
+  id        String   @id @default(cuid())
+  userId    String
+  projectId String?
+  taskId    String? // se for focado numa task específica
+  name      String? // descrição do que fez
+  duration  Int // minutos
+  type      String   @default("focus") // focus, pomodoro, deep_work
+  rating    Int? // 1-10 quão produtivo foi
+  notes     String?
+  startedAt DateTime @default(now())
+
+  user    User     @relation(fields: [userId], references: [id])
+  project Project? @relation(fields: [projectId], references: [id])
+
+  @@index([userId, startedAt])
+}
+
+model WeeklyGoal {
+  id          String   @id @default(cuid())
+  userId      String
+  title       String
+  description String?
+  completed   Boolean  @default(false)
+  weekStart   DateTime // segunda-feira da semana
+  category    String? // trabalho, saúde, pessoal
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, weekStart])
+}
+
+// ============================================================================
+// [V2] MÓDULO 7: FINANÇAS
+// ============================================================================
+
+model Transaction {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String // income, expense
+  amount      Float
+  category    String
+  subcategory String?
+  description String?
+  date        DateTime @default(now())
+  recurring   Boolean  @default(false)
+  
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, date])
+  @@index([userId, category])
 }

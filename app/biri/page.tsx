@@ -66,7 +66,7 @@ export default function BiriPage() {
           <div className="text-zinc-700 text-sm animate-pulse">
             [SYS] WAITING FOR DAILY DUMP...
             <br/>
-            > TRY: "WORKOUT DONE, READ 20 PAGES, TOOK MEDS."
+            {"> TRY: \"WORKOUT DONE, READ 20 PAGES, TOOK MEDS.\""}
           </div>
         )}
         
@@ -99,7 +99,7 @@ export default function BiriPage() {
             {log.commentary && (
               <div className="pl-6 text-purple-400 text-sm italic font-medium">
                 <span className="mr-2 text-zinc-700">DOUGLAS:</span>
-                "{log.commentary}"
+                {`"${log.commentary}"`}
               </div>
             )}
           </div>

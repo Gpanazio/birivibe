@@ -147,3 +147,38 @@ digest: "2066059296"
  ✓ Compiled in 196ms (2462 modules)
  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
  GET /dashboard 200 in 255ms
+ ✓ Compiled in 249ms (1218 modules)
+ ✓ Compiled in 168ms (1218 modules)
+ ✓ Compiled in 242ms (2520 modules)
+ ✓ Compiled in 137ms (1218 modules)
+ ✓ Compiled in 212ms (2534 modules)
+ ✓ Compiled in 137ms (1218 modules)
+ ✓ Compiled in 135ms (2520 modules)
+ ✓ Compiled in 135ms (1218 modules)
+ ✓ Compiled in 213ms (2534 modules)
+ ✓ Compiled in 137ms (1218 modules)
+ ✓ Compiled in 182ms (2520 modules)
+ ✓ Compiled in 124ms (1218 modules)
+ ✓ Compiled in 118ms (2520 modules)
+ ✓ Compiled in 271ms (1218 modules)
+ ✓ Compiled in 867ms (2462 modules)
+ ✓ Compiled in 219ms (2462 modules)
+ ✓ Compiled in 136ms (1218 modules)
+ ✓ Compiled in 98ms (1218 modules)
+ ✓ Compiled in 144ms (2520 modules)
+ ✓ Compiled in 134ms (1218 modules)
+ ✓ Compiled in 112ms (1218 modules)
+ ✓ Compiled in 112ms (1218 modules)
+ ⨯ ./components/activity/activity-list.tsx
+Error: Failed to read source code from /Users/gabrielpanazio/birivibe/components/activity/activity-list.tsx
+
+Caused by:
+    No such file or directory (os error 2)
+
+Import trace for requested module:
+./components/activity/activity-list.tsx
+./app/dashboard/page.tsx
+ ✓ Compiled in 267ms (609 modules)
+ ✓ Compiled in 98ms (316 modules)
+ ✓ Compiled in 123ms (316 modules)
+ ✓ Compiled in 86ms (72 modules)

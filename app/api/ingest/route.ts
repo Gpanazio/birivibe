@@ -68,7 +68,7 @@ export async function POST(req: Request) {
             const habit = userHabits.find(uh => uh.name.toLowerCase() === h.name.toLowerCase());
             if (habit) {
                 const log = await prisma.habitLog.create({
-                    data: { habitId: habit.id, value: h.value || 1 }
+                    data: { userId, habitId: habit.id, value: h.value || 1 }
                 });
                 savedData.push({ type: 'habit', name: habit.name, value: h.value });
             }
@@ -101,7 +101,8 @@ export async function POST(req: Request) {
                 userId,
                 bedTime: new Date(Date.now() - (data.sleep.hours * 60 * 60 * 1000)), // Estimativa
                 wakeTime: new Date(),
-                quality: data.sleep.quality || 5
+                quality: data.sleep.quality || 5,
+                date: new Date()
             }
         });
         savedData.push({ type: 'sleep', hours: data.sleep.hours });
@@ -109,10 +110,10 @@ export async function POST(req: Request) {
 
     // 4. Humor (Mood)
     if (data.mood) {
-        const mood = await prisma.moodLog.create({
+        const moodLog = await prisma.moodLog.create({
             data: {
                 userId,
-                score: data.mood.score || 5,
+                mood: data.mood.score || 5,
                 energy: data.mood.energy || 5,
                 stress: 5 // Default
             }

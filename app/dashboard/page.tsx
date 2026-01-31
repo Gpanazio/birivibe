@@ -75,7 +75,7 @@ export default async function Dashboard({ searchParams }: { searchParams: { from
              <div className="flex items-center gap-2 px-3 py-2 bg-zinc-900 rounded border border-zinc-800">
                 <span className="animate-pulse text-purple-500">✦</span>
                 <p className="text-[10px] text-zinc-400 font-medium italic truncate">
-                  "O jogador parece focado, mas a barra de capital está sofrendo."
+                  {`"O jogador parece focado, mas a barra de capital está sofrendo."`}
                 </p>
              </div>
           </div>

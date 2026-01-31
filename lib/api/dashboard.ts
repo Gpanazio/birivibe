@@ -56,7 +56,7 @@ export async function getDashboardData(
   const needs = {
     energy: Math.min(((lastSleep?.quality || 5) * 10), 100),
     fitness: recentWorkouts.length > 0 ? 85 : 30, // Simplificado p/ demo
-    mind: (lastMood?.score || 5) * 10,
+    mind: (lastMood?.mood || 5) * 10,
     capital: Math.max(100 - ((todayExpenses._sum.amount || 0) / 5), 0), // Cai conforme gasta
     overall: Math.min((streak * 10), 100)
   }
