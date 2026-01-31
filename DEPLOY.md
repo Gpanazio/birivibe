@@ -59,7 +59,7 @@ No painel do Cloudflare Pages, adicione:
 1. Vá em **Pages** > **Create a project**
 2. Conecte seu repositório GitHub
 3. Configure:
-   - **Build command:** `npm run pages:build`
+   - **Build command:** `pnpm run pages:build`
    - **Build output:** `.vercel/output/static`
    - **Node version:** `20`
 

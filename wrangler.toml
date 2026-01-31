@@ -9,4 +9,4 @@ NODE_ENV = "production"
 [[d1_databases]]
 binding = "DB"
 database_name = "birivibe-db"
-database_id = "YOUR_D1_DATABASE_ID" # Criar com: npx wrangler d1 create birivibe-db
+database_id = "SEU_D1_DATABASE_ID" # Criar com: npx wrangler d1 create birivibe-db

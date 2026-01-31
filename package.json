@@ -18,8 +18,8 @@
     "pages:dev": "npx wrangler pages dev .vercel/output/static --compatibility-flags=nodejs_compat",
     "pages:deploy": "npx wrangler pages deploy .vercel/output/static",
     "d1:create": "npx wrangler d1 create birivibe-db",
-    "d1:migrate": "npx wrangler d1 execute birivibe-db --local --file=./prisma/migrations/init.sql",
-    "d1:migrate:prod": "npx wrangler d1 execute birivibe-db --remote --file=./prisma/migrations/init.sql"
+    "d1:migrate": "npx wrangler d1 execute birivibe-db --local --file=./prisma/migrations/0001_init.sql",
+    "d1:migrate:prod": "npx wrangler d1 execute birivibe-db --remote --file=./prisma/migrations/0001_init.sql"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
