@@ -30,8 +30,16 @@ model User {
   appointments        Appointment[]
 
   // Módulo 1: Rotina & Hábitos
-  habits    Habit[]
-  habitLogs HabitLog[]
+  habits      Habit[]
+  habitLogs   HabitLog[]
+  routines    Routine[]
+  routineLogs RoutineLog[]
+  contexts    Context[]
+  goals       Goal[]
+  automations Automation[]
+  rituals     Ritual[]
+  ritualLogs  RitualLog[]
+  timeBlocks  TimeBlock[]
 
   // Módulo 2: Dieta & Nutrição
   meals          Meal[]
@@ -177,8 +185,9 @@ model Habit {
   active      Boolean @default(true)
   createdAt   DateTime @default(now())
 
-  user User       @relation(fields: [userId], references: [id])
-  logs HabitLog[]
+  user         User          @relation(fields: [userId], references: [id])
+  logs         HabitLog[]
+  routineSteps RoutineStep[]
 }
 
 model HabitLog {
@@ -632,4 +641,187 @@ model Transaction {
 
   @@index([userId, date])
   @@index([userId, category])
+}
+
+// ============================================================================
+// MÓDULO ROTINA COMPLETO
+// ============================================================================
+
+// Rotinas - Sequências de passos
+model Routine {
+  id          String  @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  icon        String?
+  color       String  @default("#8b5cf6")
+  type        String  @default("custom") // morning, evening, work, workout, custom
+  daysOfWeek  String? // JSON array [0,1,2,3,4,5,6]
+  startTime   String? // "06:30"
+  isTemplate  Boolean @default(false)
+  active      Boolean @default(true)
+  order       Int     @default(0)
+  createdAt   DateTime @default(now())
+
+  user  User          @relation(fields: [userId], references: [id])
+  steps RoutineStep[]
+  logs  RoutineLog[]
+
+  @@index([userId, active])
+}
+
+model RoutineStep {
+  id          String  @id @default(cuid())
+  routineId   String
+  habitId     String? // vincula a um hábito existente
+  name        String
+  description String?
+  duration    Int?    // minutos estimados
+  order       Int     @default(0)
+  type        String  @default("task") // habit, task, timeblock, break, checkpoint
+  isOptional  Boolean @default(false)
+  icon        String?
+
+  routine Routine @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  habit   Habit?  @relation(fields: [habitId], references: [id])
+}
+
+model RoutineLog {
+  id             String    @id @default(cuid())
+  routineId      String
+  userId         String
+  startedAt      DateTime  @default(now())
+  completedAt    DateTime?
+  stepsCompleted String?   // JSON array de step IDs completados
+  totalSteps     Int
+  duration       Int?      // minutos totais
+  notes          String?
+  rating         Int?      // 1-10
+
+  routine Routine @relation(fields: [routineId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+
+  @@index([userId, startedAt])
+}
+
+// Contextos - Tags de contexto
+model Context {
+  id     String  @id @default(cuid())
+  userId String
+  name   String  // @casa, @trabalho, @baixa-energia
+  icon   String?
+  color  String  @default("#6b7280")
+  type   String  @default("location") // location, energy, time, device
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+// Goals - Objetivos hierárquicos
+model Goal {
+  id           String    @id @default(cuid())
+  userId       String
+  name         String
+  description  String?
+  area         String?   // saúde, carreira, finanças, relacionamentos, pessoal
+  type         String    @default("quarterly") // vision, annual, quarterly, monthly, project
+  status       String    @default("active") // active, completed, abandoned
+  targetDate   DateTime?
+  metric       String?   // descrição da métrica de sucesso
+  targetValue  Float?
+  currentValue Float     @default(0)
+  progress     Float     @default(0) // 0-100
+  parentId     String?   // goal pai (hierarquia)
+  color        String    @default("#8b5cf6")
+  icon         String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  user     User   @relation(fields: [userId], references: [id])
+  parent   Goal?  @relation("GoalHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children Goal[] @relation("GoalHierarchy")
+
+  @@index([userId, status])
+  @@index([userId, type])
+}
+
+// Automações - Triggers e ações
+model Automation {
+  id          String  @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  triggerType String  // habit_completed, time, streak_reached, goal_progress
+  triggerData String  // JSON com dados do trigger
+  actionType  String  // show_habit, start_routine, send_notification, add_xp
+  actionData  String  // JSON com dados da ação
+  active      Boolean @default(true)
+  timesTriggered Int  @default(0)
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, active])
+}
+
+// Rituais - Rotinas especiais com frequência menor
+model Ritual {
+  id          String  @id @default(cuid())
+  userId      String
+  name        String
+  description String?
+  icon        String?
+  color       String  @default("#8b5cf6")
+  frequency   String  // weekly, biweekly, monthly, quarterly, yearly
+  dayOfWeek   Int?    // 0-6 para weekly (0=domingo)
+  dayOfMonth  Int?    // 1-31 para monthly
+  month       Int?    // 1-12 para yearly
+  template    String? // JSON checklist template
+  duration    Int?    // minutos estimados
+  active      Boolean @default(true)
+  createdAt   DateTime @default(now())
+
+  user User        @relation(fields: [userId], references: [id])
+  logs RitualLog[]
+
+  @@index([userId, active])
+}
+
+model RitualLog {
+  id          String   @id @default(cuid())
+  ritualId    String
+  userId      String
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+  checklist   String?  // JSON do checklist preenchido
+  notes       String?
+  reflection  String?
+  rating      Int?     // 1-10
+
+  ritual Ritual @relation(fields: [ritualId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
+
+  @@index([userId, startedAt])
+}
+
+// Time Blocks - Blocos de tempo
+model TimeBlock {
+  id          String   @id @default(cuid())
+  userId      String
+  name        String
+  type        String   @default("focus") // deep_work, shallow_work, meeting, break, personal
+  color       String   @default("#8b5cf6")
+  duration    Int      // minutos
+  startTime   DateTime
+  endTime     DateTime?
+  projectId   String?
+  completed   Boolean  @default(false)
+  notes       String?
+  recurring   String?  // JSON para recorrência
+  createdAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId, startTime])
 }

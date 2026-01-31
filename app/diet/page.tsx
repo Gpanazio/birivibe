@@ -1,127 +1,61 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { Utensils, Plus, Scale, TrendingUp, Target } from "lucide-react";
+import React, { useState, useEffect, useMemo } from 'react';
+import { LayoutDashboard, PieChart, Calendar, User, Scale, AlertTriangle } from 'lucide-react';
+import { FoodLogger } from '@/components/diet/FoodLogger';
+import { Dashboard } from '@/components/diet/Dashboard';
+import { Reports } from '@/components/diet/Reports';
+import { History } from '@/components/diet/History';
+import { Settings } from '@/components/diet/Settings';
+import { WeightTracker } from '@/components/diet/WeightTracker';
+import { HeaderMenu } from '@/components/diet/HeaderMenu';
+import { AmbientBackground } from '@/components/diet/AmbientBackground';
+import { AppView, FoodItem, UserGoals, GeminiParsedFood } from '@/lib/diet-types';
+import { getEffectiveDateString } from '@/lib/utils/dateUtils';
 
-interface FoodItem {
-  id: string;
-  name: string;
-  mealCategory?: string;
-  calories: number;
-  protein: number;
-  carbs: number;
-  fats: number;
-  fiber: number;
-  sugar: number;
-  date: string;
-  timestamp: string;
-}
+const API_BASE_URL = '';
 
-interface Goals {
-  calories: number;
-  protein: number;
-}
-
-// Helper: data efetiva (refeições entre 0h-3h contam como dia anterior)
-function getEffectiveDate(): string {
-  const now = new Date();
-  if (now.getHours() < 3) {
-    const yesterday = new Date(now);
-    yesterday.setDate(yesterday.getDate() - 1);
-    return yesterday.toISOString().split("T")[0];
-  }
-  return now.toISOString().split("T")[0];
-}
-
-function MacroBar({ label, value, target, color, emoji }: {
-  label: string;
-  value: number;
-  target?: number;
-  color: string;
-  emoji: string;
-}) {
-  const percentage = target ? Math.min((value / target) * 100, 100) : 0;
-  const isGoalMet = target && value >= target;
-
-  return (
-    <div className={`relative overflow-hidden rounded-2xl p-4 border ${isGoalMet ? 'border-yellow-500/50 bg-yellow-500/5' : 'border-zinc-800 bg-zinc-900/50'}`}>
-      <div className="flex justify-between items-start mb-2">
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">{emoji}</span>
-          <span className="text-xs font-bold text-zinc-500 uppercase">{label}</span>
-        </div>
-        <div className="text-right">
-          <span className={`text-2xl font-black ${isGoalMet ? 'text-yellow-400' : 'text-white'}`}>
-            {Math.round(value)}
-          </span>
-          {target && (
-            <span className="text-xs text-zinc-600 ml-1">/ {target}</span>
-          )}
-        </div>
-      </div>
-      {target && (
-        <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
-          <div
-            className={`h-full transition-all duration-500 ${isGoalMet ? 'bg-yellow-400' : color}`}
-            style={{ width: `${percentage}%` }}
-          />
-        </div>
-      )}
-    </div>
-  );
-}
-
-export default function DietPage() {
+function App() {
+  const [view, setView] = useState<AppView>(AppView.DASHBOARD);
+  const [goals, setGoals] = useState<UserGoals>({ calories: 2000, protein: 150 });
   const [logs, setLogs] = useState<{ [date: string]: FoodItem[] }>({});
-  const [goals, setGoals] = useState<Goals>({ calories: 2000, protein: 150 });
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const today = getEffectiveDate();
+  const today = getEffectiveDateString();
   const todayItems = useMemo(() => logs[today] || [], [logs, today]);
 
-  const totals = useMemo(() => {
-    return todayItems.reduce(
-      (acc, item) => ({
-        calories: acc.calories + (item.calories || 0),
-        protein: acc.protein + (item.protein || 0),
-        carbs: acc.carbs + (item.carbs || 0),
-        fats: acc.fats + (item.fats || 0),
-        fiber: acc.fiber + (item.fiber || 0),
-      }),
-      { calories: 0, protein: 0, carbs: 0, fats: 0, fiber: 0 }
-    );
-  }, [todayItems]);
+  const recentLogs = useMemo(() => {
+    if (!logs) return [];
+    const sortedDates = Object.keys(logs).sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+    const recentDates = sortedDates.slice(0, 3);
+    return recentDates.flatMap(d => logs[d]);
+  }, [logs]);
 
-  // Fetch inicial
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        const [goalsRes, logsRes] = await Promise.all([
-          fetch("/api/diet/goals"),
-          fetch("/api/diet/food-logs"),
-        ]);
-
+        const goalsRes = await fetch(`${API_BASE_URL}/api/diet/goals`);
         if (goalsRes.ok) {
           const goalsData = await goalsRes.json();
           setGoals(goalsData);
         }
 
+        const logsRes = await fetch(`${API_BASE_URL}/api/diet/food-logs`);
         if (logsRes.ok) {
           const logsData = await logsRes.json();
-          const grouped: { [date: string]: FoodItem[] } = {};
-          logsData.forEach((item: FoodItem) => {
+          const groupedLogs: { [date: string]: FoodItem[] } = {};
+          (logsData as FoodItem[]).forEach((item) => {
             if (item.date) {
-              if (!grouped[item.date]) grouped[item.date] = [];
-              grouped[item.date].push(item);
+              const dateKey = item.date;
+              if (!groupedLogs[dateKey]) groupedLogs[dateKey] = [];
+              groupedLogs[dateKey].push(item);
             }
           });
-          setLogs(grouped);
+          setLogs(groupedLogs);
         }
       } catch (error) {
-        console.error("Failed to fetch data:", error);
+        console.error('Failed to fetch initial data', error);
       } finally {
         setIsLoading(false);
       }
@@ -129,176 +63,195 @@ export default function DietPage() {
     fetchData();
   }, []);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!input.trim() || loading) return;
-
-    setLoading(true);
+  const handleUpdateGoals = async (newGoals: UserGoals) => {
+    setGoals(newGoals);
     try {
-      // Analisa com IA
-      const analyzeRes = await fetch("/api/diet/analyze-food", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text: input }),
+      await fetch(`${API_BASE_URL}/api/diet/goals`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newGoals)
       });
-
-      if (!analyzeRes.ok) throw new Error("Failed to analyze");
-
-      const analyzed = await analyzeRes.json();
-
-      // Salva no banco
-      const saveRes = await fetch("/api/diet/food-logs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(analyzed),
-      });
-
-      if (!saveRes.ok) throw new Error("Failed to save");
-
-      const saved = await saveRes.json();
-
-      // Atualiza estado local
-      setLogs((prev) => {
-        const dateKey = saved[0]?.date || today;
-        return {
-          ...prev,
-          [dateKey]: [...(prev[dateKey] || []), ...saved],
-        };
-      });
-
-      setInput("");
-    } catch (error) {
-      console.error("Error:", error);
-    } finally {
-      setLoading(false);
+    } catch (e) {
+      console.error('Failed to save goals', e);
     }
   };
+
+  const handleAddItems = async (items: GeminiParsedFood[]) => {
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/diet/food-logs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(items)
+      });
+
+      if (res.ok) {
+        const newItems = await res.json();
+        if (newItems && newItems.length > 0) {
+          setLogs(prev => {
+            const dateKey = newItems[0].date;
+            if (!dateKey) return prev;
+            return {
+              ...prev,
+              [dateKey]: [...(prev[dateKey] || []), ...newItems]
+            };
+          });
+        }
+      }
+    } catch (e) {
+      console.error('Failed to add items', e);
+    }
+  };
+
+  const handleUpdateItem = async (updatedItem: FoodItem) => {
+    try {
+      await fetch(`${API_BASE_URL}/api/diet/food-logs/${updatedItem.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedItem)
+      });
+
+      setLogs(prev => {
+        const newLogs = { ...prev };
+        for (const date in newLogs) {
+          const itemIndex = newLogs[date].findIndex(item => item.id === updatedItem.id);
+          if (itemIndex !== -1) {
+            newLogs[date] = newLogs[date].map(item =>
+              item.id === updatedItem.id ? updatedItem : item
+            );
+            break;
+          }
+        }
+        return newLogs;
+      });
+    } catch (e) {
+      console.error('Failed to update item', e);
+    }
+  };
+
+  const handleDeleteItem = async (itemId: string, date?: string) => {
+    try {
+      await fetch(`${API_BASE_URL}/api/diet/food-logs/${itemId}`, { method: 'DELETE' });
+
+      setLogs(prev => {
+        if (date && prev[date]) {
+          const newDayLogs = prev[date].filter(item => item.id !== itemId);
+          return { ...prev, [date]: newDayLogs };
+        }
+
+        const newLogs = { ...prev };
+        for (const d in newLogs) {
+          const itemIndex = newLogs[d].findIndex(item => item.id === itemId);
+          if (itemIndex !== -1) {
+            newLogs[d] = newLogs[d].filter(item => item.id !== itemId);
+            break;
+          }
+        }
+        return newLogs;
+      });
+    } catch (e) {
+      console.error('Failed to delete item', e);
+    }
+  };
+
+  const MobileNav = ({ v, icon: Icon, label }: { v: AppView, icon: any, label: string }) => (
+    <button
+      onClick={() => setView(v)}
+      className={`relative flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all duration-500 ${view === v
+        ? 'bg-lime-400 text-zinc-950 shadow-[0_0_20px_-5px_rgba(163,230,53,0.5)] scale-110'
+        : 'text-zinc-500 hover:text-white hover:bg-white/5'
+        }`}
+    >
+      <Icon className={`w-6 h-6 transition-transform duration-300 ${view === v ? 'fill-current scale-110' : ''}`} />
+    </button>
+  );
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
-        <div className="text-purple-500 animate-pulse">Carregando...</div>
+        <div className="text-lime-400 animate-pulse text-lg">Carregando BiriDiet...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 pb-24">
-      <div className="max-w-2xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
+    <div className="min-h-screen bg-black text-zinc-100 font-sans selection:bg-lime-500/30 overscroll-none overflow-x-hidden relative">
+      <AmbientBackground />
+
+      {/* Header */}
+      <div className="fixed top-0 w-full h-[calc(4rem+env(safe-area-inset-top))] z-40 backdrop-blur-xl bg-black/60 border-b border-zinc-800/50 pointer-events-none" />
+      
+      <header className="fixed top-0 w-full z-50 px-6 pb-4 pt-[calc(1rem+env(safe-area-inset-top))] flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 flex items-center justify-center rotate-3">
+            <img src="/logo.png" alt="Logo" className="w-full h-full object-contain drop-shadow-lg" />
+          </div>
           <div>
-            <h1 className="text-2xl font-black tracking-tight">
-              BIRI<span className="text-lime-400">DIET</span>
-            </h1>
-            <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
-              Módulo Nutrição • {today}
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <button className="p-2 bg-zinc-900 border border-zinc-800 rounded-xl hover:bg-zinc-800">
-              <Scale className="w-5 h-5 text-zinc-400" />
-            </button>
-            <button className="p-2 bg-zinc-900 border border-zinc-800 rounded-xl hover:bg-zinc-800">
-              <TrendingUp className="w-5 h-5 text-zinc-400" />
-            </button>
+            <h1 className="font-black text-xl tracking-tight leading-none text-white">BiriDiet 2000</h1>
+            <span className="text-[10px] font-bold text-lime-500 uppercase tracking-widest bg-lime-500/10 px-1.5 rounded">BETA</span>
           </div>
         </div>
+        <HeaderMenu onNavigateToWeight={() => setView(AppView.WEIGHT)} allLogs={logs} goals={goals} />
+      </header>
 
-        {/* Macros Grid */}
-        <div className="grid grid-cols-2 gap-3">
-          <MacroBar
-            label="Calorias"
-            value={totals.calories}
-            target={goals.calories}
-            color="bg-orange-500"
-            emoji="🔥"
-          />
-          <MacroBar
-            label="Proteína"
-            value={totals.protein}
-            target={goals.protein}
-            color="bg-red-500"
-            emoji="🥩"
-          />
-          <MacroBar
-            label="Carboidratos"
-            value={totals.carbs}
-            color="bg-yellow-500"
-            emoji="🍞"
-          />
-          <MacroBar
-            label="Gorduras"
-            value={totals.fats}
-            color="bg-purple-500"
-            emoji="🥑"
-          />
+      {/* Floating Dock Navigation */}
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
+        <div className="backdrop-blur-2xl bg-black/40 rounded-[2.5rem] p-2 flex items-center shadow-2xl shadow-black/50 border border-white/10 ring-1 ring-white/5">
+          <div className="flex items-center gap-1 px-2">
+            <MobileNav v={AppView.DASHBOARD} icon={LayoutDashboard} label="Hoje" />
+            <MobileNav v={AppView.HISTORY} icon={Calendar} label="Diário" />
+            <MobileNav v={AppView.REPORTS} icon={PieChart} label="Stats" />
+            <MobileNav v={AppView.SETTINGS} icon={User} label="Perfil" />
+          </div>
         </div>
+      </nav>
 
-        {/* Input */}
-        <form onSubmit={handleSubmit} className="relative">
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="O que você comeu? Ex: 2 ovos, pão integral, café"
-            className="w-full bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-4 pr-12 text-white placeholder:text-zinc-600 focus:outline-none focus:ring-2 focus:ring-lime-500/50"
-            disabled={loading}
-          />
-          <button
-            type="submit"
-            disabled={loading || !input.trim()}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-lime-500 text-black rounded-xl disabled:opacity-50"
-          >
-            {loading ? (
-              <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-            ) : (
-              <Plus className="w-5 h-5" />
-            )}
-          </button>
-        </form>
-
-        {/* Lista do dia */}
-        <div className="space-y-2">
-          <h2 className="text-xs font-bold text-zinc-500 uppercase tracking-widest flex items-center gap-2">
-            <Utensils className="w-4 h-4" />
-            Refeições de Hoje ({todayItems.length})
-          </h2>
-
-          {todayItems.length === 0 ? (
-            <div className="text-center py-12 text-zinc-700">
-              <Utensils className="w-12 h-12 mx-auto mb-2 opacity-50" />
-              <p>Nenhuma refeição registrada hoje</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {todayItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-3 flex justify-between items-center"
-                >
-                  <div>
-                    <p className="font-medium text-white">{item.name}</p>
-                    {item.mealCategory && (
-                      <span className="text-[10px] text-zinc-500 uppercase">
-                        {item.mealCategory}
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-right">
-                    <p className="text-lg font-bold text-orange-400">
-                      {item.calories} kcal
-                    </p>
-                    <p className="text-[10px] text-zinc-500">
-                      P:{item.protein}g C:{item.carbs}g G:{item.fats}g
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
+      {/* Main Content */}
+      <main className="pt-[calc(6rem+env(safe-area-inset-top))] pb-[calc(8rem+env(safe-area-inset-bottom))] px-4 md:px-0 max-w-2xl mx-auto min-h-screen">
+        <div className="animate-fade-in">
+          {view === AppView.DASHBOARD && (
+            <>
+              <FoodLogger onAddItems={handleAddItems} />
+              <Dashboard
+                todayItems={todayItems}
+                recentLogs={recentLogs}
+                goals={goals}
+                onUpdateItem={handleUpdateItem}
+                onDeleteItem={handleDeleteItem}
+              />
+            </>
           )}
+
+          {view === AppView.REPORTS && (
+            <Reports allLogs={logs} />
+          )}
+
+          {view === AppView.HISTORY && (
+            <History
+              allLogs={logs}
+              onAddItems={handleAddItems}
+              onUpdateItem={handleUpdateItem}
+              onDeleteItem={handleDeleteItem}
+              goals={goals}
+            />
+          )}
+
+          {view === AppView.SETTINGS && (
+            <Settings currentGoals={goals} onSave={handleUpdateGoals} />
+          )}
+
+          {view === AppView.WEIGHT && (
+            <WeightTracker />
+          )}
+
+          {/* Footer */}
+          <div className="mt-20 flex flex-col items-center justify-center pb-10">
+            <img src="/logo.png" alt="BiriDiet 2000 Logo" className="w-32 h-32 object-contain mb-4 mix-blend-screen drop-shadow-[0_0_15px_rgba(163,230,53,0.3)]" />
+            <p className="text-xs text-zinc-500 font-medium">BiriDiet 2000 © {new Date().getFullYear()}</p>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
+
+export default App;
