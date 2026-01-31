@@ -1,32 +1,10 @@
 import { NextResponse } from "next/server"
-import { getToken } from "next-auth/jwt"
-import { withAuth } from "next-auth/middleware"
 
-export default withAuth(
-  async function middleware(req) {
-    const token = await getToken({ req })
-    const isAuth = !!token
-    const isAuthPage =
-      req.nextUrl.pathname.startsWith("/signin") ||
-      req.nextUrl.pathname.startsWith("/signup")
-
-    if (isAuthPage) {
-      if (isAuth) {
-        return NextResponse.redirect(new URL("/dashboard", req.url))
-      }
-
-      return null
-    }
-  },
-  {
-    callbacks: {
-      async authorized() {
-        return true
-      },
-    },
-  }
-)
+export default function middleware(req) {
+  // LIBERAR ABSOLUTAMENTE TUDO PARA O GABRIEL
+  return NextResponse.next();
+}
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/signin", "/signup"],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 }

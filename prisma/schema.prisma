@@ -1,92 +1,138 @@
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-model Account {
-  id                String   @id @default(cuid())
-  userId            String   @map(name: "user_id")
-  type              String
-  provider          String
-  providerAccountId String   @map(name: "provider_account_id")
-  refresh_token     String?  @db.Text
-  access_token      String?  @db.Text
-  expires_at        Int?
-  token_type        String?
-  scope             String?
-  id_token          String?  @db.Text
-  session_state     String?
-  createdAt         DateTime @default(now()) @map(name: "created_at")
-  updatedAt         DateTime @updatedAt @map(name: "updated_at")
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-  @@map(name: "accounts")
-}
-
-model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique @map(name: "session_token")
-  userId       String   @map(name: "user_id")
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map(name: "sessions")
-}
-
+// --- AUTH & USER ---
 model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
-  emailVerified DateTime? @map(name: "email_verified")
   image         String?
-  createdAt     DateTime  @default(now()) @map(name: "created_at")
-  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
-
-  accounts   Account[]
-  sessions   Session[]
-  activities Activity[]
-
-  @@map(name: "users")
+  createdAt     DateTime  @default(now())
+  
+  habits        Habit[]
+  workouts      Workout[]
+  bodyMetrics   BodyMetric[]
+  sleepLogs     SleepLog[]
+  moodLogs      MoodLog[]
+  focusSessions FocusSession[]
+  tasks         Task[]
+  transactions  Transaction[]
 }
 
-model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
-
-  @@unique([identifier, token])
-  @@map(name: "verification_tokens")
-}
-
-model Activity {
+// --- 1. ROTINA & HÁBITOS ---
+model Habit {
   id          String   @id @default(cuid())
-  userId      String   @map(name: "user_id")
+  userId      String
   name        String
   description String?
-  colorCode   String   @map(name: "color_code")
-  createdAt   DateTime @default(now()) @map(name: "created_at")
-  updatedAt   DateTime @updatedAt @map(name: "updated_at")
-
-  user User @relation(fields: [userId], references: [id])
-
-  activityLogs ActivityLog[]
-
-  @@map(name: "activities")
+  category    String?  // Ex: Saúde, Mente, Grana
+  frequency   String   @default("daily") // daily, weekly, x_times
+  targetValue Int      @default(1)
+  unit        String?  // Ex: ml, paginas, min
+  color       String   @default("#8b5cf6")
+  
+  user        User     @relation(fields: [userId], references: [id])
+  logs        HabitLog[]
 }
 
-model ActivityLog {
-  id         String   @id @default(cuid())
-  activityId String   @map(name: "activity_id")
-  date       DateTime @default(now())
-  count      Int      @default(1)
+model HabitLog {
+  id        String   @id @default(cuid())
+  habitId   String
+  value     Float    @default(1)
+  date      DateTime @default(now())
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+}
 
-  activity Activity @relation(fields: [activityId], references: [id])
+// --- 3. EXERCÍCIO & FITNESS ---
+model Workout {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String   // Ex: Treino A, Perna, Cardio
+  duration  Int?     // minutos
+  date      DateTime @default(now())
+  exercises ExerciseLog[]
+  user      User     @relation(fields: [userId], references: [id])
+}
 
-  @@map(name: "activity_log")
+model ExerciseLog {
+  id        String   @id @default(cuid())
+  workoutId String
+  name      String   // Ex: Supino
+  sets      Int?
+  reps      Int?
+  weight    Float?   // kg
+  workout   Workout  @relation(fields: [workoutId], references: [id], onDelete: Cascade)
+}
+
+// --- 4 & 5. SONO, HUMOR & VITALIDADE ---
+model SleepLog {
+  id        String   @id @default(cuid())
+  userId    String
+  bedTime   DateTime
+  wakeTime  DateTime
+  quality   Int      // 1-10
+  notes     String?
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model MoodLog {
+  id        String   @id @default(cuid())
+  userId    String
+  score     Int      // 1-10
+  energy    Int      // 1-10
+  stress    Int      // 1-10
+  note      String?
+  date      DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+// --- 6. PRODUTIVIDADE ---
+model FocusSession {
+  id        String   @id @default(cuid())
+  userId    String
+  project   String
+  duration  Int      // minutos
+  date      DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+model Task {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  completed Boolean  @default(false)
+  priority  Int      @default(1)
+  dueDate   DateTime?
+  user      User     @relation(fields: [userId], references: [id])
+}
+
+// --- 7. FINANÇAS ---
+model Transaction {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // income, expense
+  amount      Float
+  category    String
+  description String?
+  date        DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+// --- 8. MÉTRICAS CORPAIS ---
+model BodyMetric {
+  id        String   @id @default(cuid())
+  userId    String
+  weight    Float?
+  bodyFat   Float?
+  chest     Float?
+  waist     Float?
+  date      DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }

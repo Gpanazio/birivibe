@@ -1,62 +1,43 @@
-# Iotawise
+# BiriVibe OS - Technical Documentation
 
-Iotawise is an open-source habit tracking app that lets you track daily habits and monitor your activity streaks and progress with little effort.
+## 1. Vision
+BiriVibe OS is a centralized "Life Operating System" designed to aggregate health, habits, productivity, and finance into a single, friction-less dashboard. It uses AI (Douglas) to eliminate the burden of manual logging.
 
-![og image](/public/og.jpg)
+## 2. Technical Stack
+- **Framework:** Next.js 14 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS + Shadcn/UI
+- **Database:** SQLite (local) / Cloudflare D1 (production)
+- **ORM:** Prisma
+- **AI Engine:** Google Gemini 2.5 Flash Lite
+- **Deployment:** Cloudflare Pages
 
-## Features
+## 3. Data Architecture (Master Schema)
+The system is built around a multi-user schema:
+- **Rotina:** `Habit` & `HabitLog` (checks and metrics).
+- **Performance:** `Workout` & `ExerciseLog` (weight/volume tracking).
+- **Vitality:** `SleepLog` & `MoodLog` (energy/quality correlation).
+- **Capital:** `Transaction` (quick finance logging).
+- **Body:** `BodyMetric` (weight/fat evolution).
 
-- User-friendly Interface
-- Habit/Activity Tracking
-- Activity Streak Monitoring
-- Dashboard Analytics
-- Google Authentication
-- Web Push Notifications (coming soon)
-- Cross-platform Support (PWA)
+## 4. AI Ingestion Engine (The BiriBrain)
+Located at `/api/ingest`, the engine takes raw text (The Daily Dump) and:
+1. Maps it to existing user activities.
+2. Extracts numerical values (counts/weights).
+3. Identifies intent (habit completion vs mood check-in).
+4. Saves data to specific tables in the database.
+5. Returns a sarcastic, personalized commentary (Douglas persona).
 
-## Stack
+## 5. UI/UX Principles
+- **OLED Black:** Background #000 for maximum focus and energy saving on mobile.
+- **TDAH-Friendly:** Density over whitespace. Minimal clicks. Fast feedback.
+- **Terminal Aesthetics:** Monospace fonts and system-like logs for transparency.
 
-- [Next.js](https://nextjs.org) `/app` dir
-- [TypeScript](https://www.typescriptlang.org)
-- [Tailwind CSS](https://tailwindcss.com)
-- [shadcn/ui](https://ui.shadcn.com) Components
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://www.prisma.io) ORM
-- [Zod](https://zod.dev) Validations
-- [Neon](https://neon.tech/) Database (PostgreSQL)
+## 6. How to Deploy (Planned)
+1. Initialize Cloudflare D1.
+2. Configure `wrangler.toml`.
+3. Set environment variables (GEMINI_API_KEY, NEXTAUTH_SECRET).
+4. Run `npx prisma db push` targeting the D1 adapter.
 
-## Running Locally
-
-1. Clone the repository.
-
-```bash
-pnpm dlx degit redpangilinan/iotawise
-```
-
-2. Install dependencies using pnpm.
-
-```bash
-pnpm install
-```
-
-3. Copy `env.example` to `env.local` and update the variables.
-
-```bash
-cp .env.example .env.local
-```
-
-4. Generate prisma client before starting development server.
-
-```bash
-pnpm postinstall
-```
-
-5. Start the development server.
-
-```bash
-pnpm dev
-```
-
-## License
-
-This project is licensed under the [MIT License](https://opensource.org/licenses/MIT) - see the [LICENSE](LICENSE) file for details.
+---
+*Created: 2026-01-31*

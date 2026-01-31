@@ -1,0 +1,149 @@
+
+> iotawise@0.1.0 dev
+> next dev -p 3000
+
+  ▲ Next.js 14.2.32
+  - Local:        http://localhost:3000
+  - Environments: .env
+
+ ✓ Starting...
+ ✓ Ready in 1268ms
+ ✓ Compiled /middleware in 84ms (72 modules)
+ ○ Compiling /dashboard ...
+Browserslist: caniuse-lite is outdated. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+ ✓ Compiled /dashboard in 5s (3722 modules)
+ ⨯ lib/api/logs.ts (13:31) @ findMany
+ ⨯ TypeError: Cannot read properties of undefined (reading 'findMany')
+    at getLogs (./lib/api/logs.ts:21:70)
+    at getDashboardData (./lib/api/dashboard.ts:14:63)
+    at Dashboard (./app/dashboard/page.tsx:43:92)
+digest: "3932243137"
+[0m [90m 11 |[39m     type [33m===[39m [32m"activity"[39m [33m?[39m { activityId[33m:[39m id } [33m:[39m { activity[33m:[39m { userId[33m:[39m id } }[0m
+[0m [90m 12 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 13 |[39m   [36mreturn[39m [36mawait[39m db[33m.[39mactivityLog[33m.[39mfindMany({[0m
+[0m [90m    |[39m                               [31m[1m^[22m[39m[0m
+[0m [90m 14 |[39m     select[33m:[39m {[0m
+[0m [90m 15 |[39m       id[33m:[39m [36mtrue[39m[33m,[39m[0m
+[0m [90m 16 |[39m       date[33m:[39m [36mtrue[39m[33m,[39m[0m
+ ⨯ lib/api/logs.ts (13:31) @ findMany
+ ⨯ TypeError: Cannot read properties of undefined (reading 'findMany')
+    at getLogs (./lib/api/logs.ts:21:70)
+    at getDashboardData (./lib/api/dashboard.ts:14:63)
+    at Dashboard (./app/dashboard/page.tsx:43:92)
+digest: "3932243137"
+[0m [90m 11 |[39m     type [33m===[39m [32m"activity"[39m [33m?[39m { activityId[33m:[39m id } [33m:[39m { activity[33m:[39m { userId[33m:[39m id } }[0m
+[0m [90m 12 |[39m[0m
+[0m[31m[1m>[22m[39m[90m 13 |[39m   [36mreturn[39m [36mawait[39m db[33m.[39mactivityLog[33m.[39mfindMany({[0m
+[0m [90m    |[39m                               [31m[1m^[22m[39m[0m
+[0m [90m 14 |[39m     select[33m:[39m {[0m
+[0m [90m 15 |[39m       id[33m:[39m [36mtrue[39m[33m,[39m[0m
+[0m [90m 16 |[39m       date[33m:[39m [36mtrue[39m[33m,[39m[0m
+ GET /dashboard 200 in 5640ms
+ ✓ Compiled in 296ms (1726 modules)
+ ⚠ Cross origin request detected from bore.pub to /_next/* resource. In a future major version of Next.js, you will need to explicitly configure "allowedDevOrigins" in next.config to allow this.
+Read more: https://nextjs.org/docs/app/api-reference/config/next-config-js/allowedDevOrigins
+ ✓ Compiled in 238ms (1987 modules)
+ ⨯ PrismaClientKnownRequestError: 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Raw query failed. Code: `1`. Message: `no such table: activities`
+    at async getUserActivities (./lib/api/activities.ts:25:21)
+    at async Promise.all (index 4)
+    at async getDashboardData (./lib/api/dashboard.ts:13:59)
+    at async Dashboard (./app/dashboard/page.tsx:43:18)
+digest: "508304986"
+ ⨯ PrismaClientKnownRequestError: 
+Invalid `prisma.$queryRaw()` invocation:
+
+
+Raw query failed. Code: `1`. Message: `no such table: activities`
+    at async getUserActivities (./lib/api/activities.ts:25:21)
+    at async Promise.all (index 4)
+    at async getDashboardData (./lib/api/dashboard.ts:13:59)
+    at async Dashboard (./app/dashboard/page.tsx:43:18)
+digest: "508304986"
+ GET /dashboard 200 in 357ms
+ ✓ Compiled in 151ms (1754 modules)
+ GET /dashboard 200 in 313ms
+ GET /dashboard 200 in 37ms
+ GET /dashboard 200 in 37ms
+ ✓ Compiled in 303ms (3480 modules)
+ GET /dashboard 200 in 94ms
+ ✓ Compiled in 322ms (2451 modules)
+ ✓ Compiled in 817ms (1246 modules)
+ GET /dashboard 200 in 569ms
+ ✓ Compiled in 382ms (2462 modules)
+ ⨯ app/dashboard/page.tsx (102:38) @ name
+ ⨯ TypeError: Cannot read properties of undefined (reading 'name')
+    at eval (./app/dashboard/page.tsx:351:70)
+    at Array.map (<anonymous>)
+    at Dashboard (./app/dashboard/page.tsx:347:67)
+digest: "2066059296"
+[0m [90m 100 |[39m                  {data[33m.[39mlogs[33m.[39mslice([35m0[39m[33m,[39m [35m8[39m)[33m.[39mmap((log[33m:[39m any[33m,[39m i[33m:[39m number) [33m=>[39m ([0m
+[0m [90m 101 |[39m                     [33m<[39m[33mspan[39m key[33m=[39m{i} className[33m=[39m[32m"px-3 py-1 bg-zinc-900 text-zinc-300 text-[10px] font-bold rounded-full border border-zinc-800"[39m[33m>[39m[0m
+[0m[31m[1m>[22m[39m[90m 102 |[39m                       [33m+[39m{log[33m.[39mactivity[33m.[39mname}[0m
+[0m [90m     |[39m                                      [31m[1m^[22m[39m[0m
+[0m [90m 103 |[39m                     [33m<[39m[33m/[39m[33mspan[39m[33m>[39m[0m
+[0m [90m 104 |[39m                  ))}[0m
+[0m [90m 105 |[39m                  {data[33m.[39mlogs[33m.[39mlength [33m===[39m [35m0[39m [33m&&[39m [33m<[39m[33mspan[39m className[33m=[39m[32m"text-zinc-700 text-[10px] italic underline"[39m[33m>[39m[33mNenhum[39m buff ativo[33m.[39m [33mVá[39m trabalhar[33m.[39m[33m<[39m[33m/[39m[33mspan[39m[33m>[39m}[0m
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ app/dashboard/page.tsx (102:38) @ name
+ ⨯ TypeError: Cannot read properties of undefined (reading 'name')
+    at eval (./app/dashboard/page.tsx:351:70)
+    at Array.map (<anonymous>)
+    at Dashboard (./app/dashboard/page.tsx:347:67)
+digest: "2066059296"
+[0m [90m 100 |[39m                  {data[33m.[39mlogs[33m.[39mslice([35m0[39m[33m,[39m [35m8[39m)[33m.[39mmap((log[33m:[39m any[33m,[39m i[33m:[39m number) [33m=>[39m ([0m
+[0m [90m 101 |[39m                     [33m<[39m[33mspan[39m key[33m=[39m{i} className[33m=[39m[32m"px-3 py-1 bg-zinc-900 text-zinc-300 text-[10px] font-bold rounded-full border border-zinc-800"[39m[33m>[39m[0m
+[0m[31m[1m>[22m[39m[90m 102 |[39m                       [33m+[39m{log[33m.[39mactivity[33m.[39mname}[0m
+[0m [90m     |[39m                                      [31m[1m^[22m[39m[0m
+[0m [90m 103 |[39m                     [33m<[39m[33m/[39m[33mspan[39m[33m>[39m[0m
+[0m [90m 104 |[39m                  ))}[0m
+[0m [90m 105 |[39m                  {data[33m.[39mlogs[33m.[39mlength [33m===[39m [35m0[39m [33m&&[39m [33m<[39m[33mspan[39m className[33m=[39m[32m"text-zinc-700 text-[10px] italic underline"[39m[33m>[39m[33mNenhum[39m buff ativo[33m.[39m [33mVá[39m trabalhar[33m.[39m[33m<[39m[33m/[39m[33mspan[39m[33m>[39m}[0m
+ ⨯ app/dashboard/page.tsx (102:38) @ name
+ ⨯ TypeError: Cannot read properties of undefined (reading 'name')
+    at eval (./app/dashboard/page.tsx:351:70)
+    at Array.map (<anonymous>)
+    at Dashboard (./app/dashboard/page.tsx:347:67)
+digest: "2066059296"
+[0m [90m 100 |[39m                  {data[33m.[39mlogs[33m.[39mslice([35m0[39m[33m,[39m [35m8[39m)[33m.[39mmap((log[33m:[39m any[33m,[39m i[33m:[39m number) [33m=>[39m ([0m
+[0m [90m 101 |[39m                     [33m<[39m[33mspan[39m key[33m=[39m{i} className[33m=[39m[32m"px-3 py-1 bg-zinc-900 text-zinc-300 text-[10px] font-bold rounded-full border border-zinc-800"[39m[33m>[39m[0m
+[0m[31m[1m>[22m[39m[90m 102 |[39m                       [33m+[39m{log[33m.[39mactivity[33m.[39mname}[0m
+[0m [90m     |[39m                                      [31m[1m^[22m[39m[0m
+[0m [90m 103 |[39m                     [33m<[39m[33m/[39m[33mspan[39m[33m>[39m[0m
+[0m [90m 104 |[39m                  ))}[0m
+[0m [90m 105 |[39m                  {data[33m.[39mlogs[33m.[39mlength [33m===[39m [35m0[39m [33m&&[39m [33m<[39m[33mspan[39m className[33m=[39m[32m"text-zinc-700 text-[10px] italic underline"[39m[33m>[39m[33mNenhum[39m buff ativo[33m.[39m [33mVá[39m trabalhar[33m.[39m[33m<[39m[33m/[39m[33mspan[39m[33m>[39m}[0m
+ GET /dashboard 200 in 50ms
+ ⨯ app/dashboard/page.tsx (102:38) @ name
+ ⨯ TypeError: Cannot read properties of undefined (reading 'name')
+    at eval (./app/dashboard/page.tsx:351:70)
+    at Array.map (<anonymous>)
+    at Dashboard (./app/dashboard/page.tsx:347:67)
+digest: "2066059296"
+[0m [90m 100 |[39m                  {data[33m.[39mlogs[33m.[39mslice([35m0[39m[33m,[39m [35m8[39m)[33m.[39mmap((log[33m:[39m any[33m,[39m i[33m:[39m number) [33m=>[39m ([0m
+[0m [90m 101 |[39m                     [33m<[39m[33mspan[39m key[33m=[39m{i} className[33m=[39m[32m"px-3 py-1 bg-zinc-900 text-zinc-300 text-[10px] font-bold rounded-full border border-zinc-800"[39m[33m>[39m[0m
+[0m[31m[1m>[22m[39m[90m 102 |[39m                       [33m+[39m{log[33m.[39mactivity[33m.[39mname}[0m
+[0m [90m     |[39m                                      [31m[1m^[22m[39m[0m
+[0m [90m 103 |[39m                     [33m<[39m[33m/[39m[33mspan[39m[33m>[39m[0m
+[0m [90m 104 |[39m                  ))}[0m
+[0m [90m 105 |[39m                  {data[33m.[39mlogs[33m.[39mlength [33m===[39m [35m0[39m [33m&&[39m [33m<[39m[33mspan[39m className[33m=[39m[32m"text-zinc-700 text-[10px] italic underline"[39m[33m>[39m[33mNenhum[39m buff ativo[33m.[39m [33mVá[39m trabalhar[33m.[39m[33m<[39m[33m/[39m[33mspan[39m[33m>[39m}[0m
+ ⨯ app/dashboard/page.tsx (102:38) @ name
+ ⨯ TypeError: Cannot read properties of undefined (reading 'name')
+    at eval (./app/dashboard/page.tsx:351:70)
+    at Array.map (<anonymous>)
+    at Dashboard (./app/dashboard/page.tsx:347:67)
+digest: "2066059296"
+[0m [90m 100 |[39m                  {data[33m.[39mlogs[33m.[39mslice([35m0[39m[33m,[39m [35m8[39m)[33m.[39mmap((log[33m:[39m any[33m,[39m i[33m:[39m number) [33m=>[39m ([0m
+[0m [90m 101 |[39m                     [33m<[39m[33mspan[39m key[33m=[39m{i} className[33m=[39m[32m"px-3 py-1 bg-zinc-900 text-zinc-300 text-[10px] font-bold rounded-full border border-zinc-800"[39m[33m>[39m[0m
+[0m[31m[1m>[22m[39m[90m 102 |[39m                       [33m+[39m{log[33m.[39mactivity[33m.[39mname}[0m
+[0m [90m     |[39m                                      [31m[1m^[22m[39m[0m
+[0m [90m 103 |[39m                     [33m<[39m[33m/[39m[33mspan[39m[33m>[39m[0m
+[0m [90m 104 |[39m                  ))}[0m
+[0m [90m 105 |[39m                  {data[33m.[39mlogs[33m.[39mlength [33m===[39m [35m0[39m [33m&&[39m [33m<[39m[33mspan[39m className[33m=[39m[32m"text-zinc-700 text-[10px] italic underline"[39m[33m>[39m[33mNenhum[39m buff ativo[33m.[39m [33mVá[39m trabalhar[33m.[39m[33m<[39m[33m/[39m[33mspan[39m[33m>[39m}[0m
+ GET /dashboard 200 in 40ms
+ ✓ Compiled in 196ms (2462 modules)
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET /dashboard 200 in 255ms

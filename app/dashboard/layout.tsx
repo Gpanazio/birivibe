@@ -1,8 +1,4 @@
-import { dashboardLinks } from "@/config/links"
 import { getCurrentUser } from "@/lib/session"
-import Footer from "@/components/layout/footer"
-import Navbar from "@/components/layout/navbar"
-import { DashboardNav } from "@/components/pages/dashboard/dashboard-nav"
 
 interface DashboardLayoutProps {
   children: React.ReactNode
@@ -11,24 +7,24 @@ interface DashboardLayoutProps {
 export default async function DashboardLayout({
   children,
 }: DashboardLayoutProps) {
-  const user = await getCurrentUser()
-
   return (
-    <div className="flex min-h-screen flex-col space-y-6">
-      <Navbar
-        user={{
-          name: user?.name,
-          image: user?.image,
-          email: user?.email,
-        }}
-      />
-      <div className="container grid flex-1 gap-12 md:grid-cols-[200px_1fr]">
-        <aside className="hidden w-[200px] flex-col md:flex">
-          <DashboardNav items={dashboardLinks.data} />
-        </aside>
-        <main className="flex w-full flex-1 flex-col">{children}</main>
-      </div>
-      <Footer />
+    <div className="flex min-h-screen flex-col bg-black bg-grid">
+      <header className="sticky top-0 z-40 border-b border-zinc-900 bg-black/50 backdrop-blur">
+        <div className="container flex h-14 items-center justify-between py-4">
+          <div className="flex items-center gap-2">
+            <span className="terminal-font text-xs font-bold text-purple-500 italic tracking-tighter">BIRIVIBE.OS</span>
+            <span className="text-[10px] text-zinc-600 uppercase tracking-widest hidden md:block">// LIFE_ENGINE_V1</span>
+          </div>
+          <nav className="flex items-center gap-4">
+             <a href="/biri" className="text-[10px] text-zinc-400 hover:text-purple-500 uppercase font-bold transition-colors">Neural_Input</a>
+             <a href="/dashboard" className="text-[10px] text-white underline underline-offset-4 uppercase font-bold">Dashboard</a>
+          </nav>
+        </div>
+      </header>
+      <main className="container flex-1 py-6">{children}</main>
+      <footer className="border-t border-zinc-900 py-4 text-center">
+        <p className="text-[10px] text-zinc-700 uppercase tracking-widest">Maicon Douglas Systems © 2026</p>
+      </footer>
     </div>
   )
 }
