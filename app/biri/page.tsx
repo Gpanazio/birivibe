@@ -27,15 +27,15 @@ export default function BiriPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: input }),
       });
-      const data = await res.json();
-      
+      const data = await res.json() as any;
+
       if (!res.ok) throw new Error(data.error || "Failed to process");
-      
-      setLogs(prev => [...prev, { 
-        input, 
-        result: data.logs, 
+
+      setLogs(prev => [...prev, {
+        input,
+        result: data.logs,
         commentary: data.commentary,
-        timestamp: new Date().toLocaleTimeString() 
+        timestamp: new Date().toLocaleTimeString()
       }]);
       setInput("");
     } catch (err: any) {
@@ -65,18 +65,18 @@ export default function BiriPage() {
         {logs.length === 0 && (
           <div className="text-zinc-700 text-sm animate-pulse">
             [SYS] WAITING FOR DAILY DUMP...
-            <br/>
+            <br />
             {"> TRY: \"WORKOUT DONE, READ 20 PAGES, TOOK MEDS.\""}
           </div>
         )}
-        
+
         {logs.map((log, i) => (
           <div key={i} className="space-y-2 group">
             <div className="flex items-center text-xs text-zinc-600">
               <span className="mr-2">[{log.timestamp}]</span>
               <div className="h-[1px] flex-1 bg-zinc-900 group-hover:bg-zinc-800 transition-colors"></div>
             </div>
-            
+
             <div className="flex items-start">
               <span className="text-purple-500 mr-3 shrink-0">GABRIEL:</span>
               <span className="text-zinc-300">{log.input}</span>
@@ -104,7 +104,7 @@ export default function BiriPage() {
             )}
           </div>
         ))}
-        
+
         {loading && (
           <div className="text-purple-500 animate-pulse text-xs tracking-widest uppercase">
             [PROC] DOUGLAS IS THINKING...

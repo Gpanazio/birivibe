@@ -134,7 +134,7 @@ export default function GoalsPage() {
     const fetchGoals = async () => {
       try {
         const res = await fetch("/api/goals");
-        if (res.ok) setGoals(await res.json());
+        if (res.ok) setGoals(await res.json() as any);
       } catch (error) {
         console.error("Failed to fetch goals:", error);
       } finally {
@@ -153,7 +153,7 @@ export default function GoalsPage() {
         body: JSON.stringify(newGoal),
       });
       if (res.ok) {
-        const goal = await res.json();
+        const goal = await res.json() as any;
         setGoals(prev => [...prev, goal]);
         setNewGoal({ name: "", description: "", area: "personal", type: "quarterly", targetDate: "", color: "#8b5cf6" });
         setShowCreate(false);

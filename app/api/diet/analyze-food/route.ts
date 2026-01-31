@@ -35,7 +35,7 @@ EXEMPLO DE SAÍDA:
 
 export async function POST(req: NextRequest) {
   try {
-    const { text } = await req.json();
+    const { text } = await req.json() as any;
 
     if (!text) {
       return NextResponse.json({ error: "Text is required" }, { status: 400 });

@@ -43,7 +43,7 @@ export async function GET(req: NextRequest) {
 // POST /api/diet/food-logs - adiciona novos logs
 export async function POST(req: NextRequest) {
   try {
-    const items = await req.json();
+    const items = await req.json() as any;
     
     let user = await db.user.findFirst();
     if (!user) {

@@ -66,8 +66,8 @@ export default function SettingsPage() {
           fetch("/api/contexts"),
           fetch("/api/automations"),
         ]);
-        if (ctxRes.ok) setContexts(await ctxRes.json());
-        if (autoRes.ok) setAutomations(await autoRes.json());
+        if (ctxRes.ok) setContexts(await ctxRes.json() as any);
+        if (autoRes.ok) setAutomations(await autoRes.json() as any);
       } catch (error) {
         console.error("Failed to fetch:", error);
       } finally {
@@ -86,7 +86,7 @@ export default function SettingsPage() {
         body: JSON.stringify(newContext),
       });
       if (res.ok) {
-        const ctx = await res.json();
+        const ctx = await res.json() as any;
         setContexts(prev => [...prev, ctx]);
         setNewContext({ name: "", icon: "📍", color: "#6b7280", type: "location" });
         setShowAddContext(false);
@@ -105,7 +105,7 @@ export default function SettingsPage() {
         body: JSON.stringify(newAutomation),
       });
       if (res.ok) {
-        const auto = await res.json();
+        const auto = await res.json() as any;
         setAutomations(prev => [...prev, auto]);
         setShowAddAutomation(false);
       }

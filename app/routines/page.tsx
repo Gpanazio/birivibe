@@ -163,7 +163,7 @@ export default function RoutinesPage() {
       try {
         const res = await fetch("/api/routines");
         if (res.ok) {
-          const data = await res.json();
+          const data = await res.json() as any;
           setRoutines(data);
         }
       } catch (error) {
@@ -186,7 +186,7 @@ export default function RoutinesPage() {
       });
 
       if (res.ok) {
-        const routine = await res.json();
+        const routine = await res.json() as any;
         setRoutines(prev => [...prev, routine]);
         setNewRoutine({ name: "", type: "morning", color: "#8b5cf6", startTime: "06:30" });
         setShowCreate(false);

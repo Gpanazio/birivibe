@@ -127,7 +127,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ todayItems, recentLogs, go
       try {
         const res = await fetch(`${API_BASE_URL}/api/streak`);
         if (res.ok) {
-          const data = await res.json();
+          const data = await res.json() as any;
           setCurrentStreak(data.currentStreak || 0);
         }
       } catch (err) {

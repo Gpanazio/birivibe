@@ -33,7 +33,7 @@ export const Settings: React.FC<SettingsProps> = ({ currentGoals, onSave }) => {
       try {
         const res = await fetch(`${API_BASE_URL}/api/weights`);
         if (res.ok) {
-          const data = await res.json();
+          const data = await res.json() as any;
           // Assuming API returns sorted by date DESC (newest first) based on server.js
           if (data && data.length > 0) {
             setLatestWeight(data[0].weight);
@@ -306,7 +306,7 @@ export const Settings: React.FC<SettingsProps> = ({ currentGoals, onSave }) => {
       <div className="mt-8 p-4 border border-zinc-800/50 rounded-lg bg-zinc-900/50 flex gap-3">
         <AlertCircle className="w-5 h-5 text-zinc-600 shrink-0" />
         <p className="text-zinc-500 text-xs leading-relaxed">
-          A "Biridica" usará essas informações para personalizar as análises diárias.
+          A &quot;Biridica&quot; usará essas informações para personalizar as análises diárias.
           Sempre consulte um médico para orientações específicas sobre condições de saúde.
         </p>
       </div>

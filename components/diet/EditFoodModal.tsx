@@ -43,7 +43,7 @@ export const EditFoodModal: React.FC<EditFoodModalProps> = ({ item, isOpen, onCl
   };
 
   const modalContent = (
-    <div className={`fixed inset-0 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/60 backdrop-blur-[2px] animate-fade-in`} style={{ zIndex: Z_INDEX.MODAL }} onClick={onClose}>
+    <div className={`fixed inset-0 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/60 backdrop-blur-[2px] animate-fade-in`} style={{ zIndex: Z_INDEX.modal }} onClick={onClose}>
       <div
         className="glass-thick border-t md:border border-white/10 w-full max-w-md rounded-t-[2.5rem] md:rounded-[2.5rem] shadow-2xl overflow-hidden animate-slide-up-mobile flex flex-col max-h-[85vh] md:max-h-[90vh] relative"
         onClick={(e) => e.stopPropagation()}

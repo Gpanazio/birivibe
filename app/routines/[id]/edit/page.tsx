@@ -227,13 +227,13 @@ export default function EditRoutinePage() {
         ]);
 
         if (routineRes.ok) {
-          const data = await routineRes.json();
+          const data = await routineRes.json() as any;
           setRoutine(data);
           setSteps(data.steps || []);
         }
 
         if (habitsRes.ok) {
-          const data = await habitsRes.json();
+          const data = await habitsRes.json() as any;
           setHabits(data);
         }
       } catch (error) {

@@ -7,7 +7,7 @@ export async function PUT(
   { params }: { params: { logId: string } }
 ) {
   try {
-    const body = await req.json();
+    const body = await req.json() as any;
 
     const log = await db.routineLog.update({
       where: { id: params.logId },

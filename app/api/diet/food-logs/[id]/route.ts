@@ -8,7 +8,7 @@ export async function PUT(
 ) {
   try {
     const { id } = params;
-    const body = await req.json();
+    const body = await req.json() as any;
 
     const updated = await db.foodLog.update({
       where: { id },

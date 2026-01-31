@@ -147,12 +147,12 @@ export default function HabitsPage() {
         ]);
 
         if (habitsRes.ok) {
-          const data = await habitsRes.json();
+          const data = await habitsRes.json() as any;
           setHabits(data);
         }
 
         if (logsRes.ok) {
-          const data = await logsRes.json();
+          const data = await logsRes.json() as any;
           setLogs(data);
         }
       } catch (error) {
@@ -181,7 +181,7 @@ export default function HabitsPage() {
         });
         
         if (res.ok) {
-          const newLog = await res.json();
+          const newLog = await res.json() as any;
           setLogs(prev => [...prev, { ...newLog, date: date }]);
         }
       }
@@ -201,7 +201,7 @@ export default function HabitsPage() {
       });
 
       if (res.ok) {
-        const habit = await res.json();
+        const habit = await res.json() as any;
         setHabits(prev => [...prev, habit]);
         setNewHabit({ name: "", category: "", color: "#8b5cf6" });
         setShowAdd(false);

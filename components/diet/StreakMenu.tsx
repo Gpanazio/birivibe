@@ -54,10 +54,10 @@ export const StreakMenu: React.FC<StreakMenuProps> = ({ isOpen, onClose }) => {
         ]);
 
         if (streakRes.ok) {
-          setStreakData(await streakRes.json());
+          setStreakData(await streakRes.json() as any);
         }
         if (achievementsRes.ok) {
-          setAchievementsData(await achievementsRes.json());
+          setAchievementsData(await achievementsRes.json() as any);
         }
       } catch (err) {
         console.error('Failed to fetch gamification data', err);

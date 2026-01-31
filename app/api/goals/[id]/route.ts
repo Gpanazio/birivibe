@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const body = await req.json();
+    const body = await req.json() as any;
     const goal = await db.goal.update({
       where: { id: params.id },
       data: {

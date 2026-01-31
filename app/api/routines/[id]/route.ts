@@ -38,7 +38,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const body = await req.json();
+    const body = await req.json() as any;
 
     // Atualiza a rotina
     const routine = await db.routine.update({
@@ -57,19 +57,22 @@ export async function PUT(
     // Se passos foram enviados, recria
     if (body.steps) {
       await db.routineStep.deleteMany({ where: { routineId: params.id } });
-      await db.routineStep.createMany({
-        data: body.steps.map((step: any, index: number) => ({
-          routineId: params.id,
-          name: step.name,
-          description: step.description,
-          duration: step.duration,
-          order: index,
-          type: step.type || "task",
-          isOptional: step.isOptional || false,
-          habitId: step.habitId,
-          icon: step.icon,
-        })),
-      });
+      for (let index = 0; index < body.steps.length; index++) {
+        const step = body.steps[index];
+        await db.routineStep.create({
+          data: {
+            routineId: params.id,
+            name: step.name,
+            description: step.description,
+            duration: step.duration,
+            order: index,
+            type: step.type || "task",
+            isOptional: step.isOptional || false,
+            habitId: step.habitId,
+            icon: step.icon,
+          },
+        });
+      }
     }
 
     const updated = await db.routine.findUnique({

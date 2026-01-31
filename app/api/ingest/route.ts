@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
     if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { text } = await req.json();
+    const { text } = await req.json() as any;
     if (!text) return NextResponse.json({ error: "Text required" }, { status: 400 });
 
     // Puxa hábitos e exercícios do usuário para contexto

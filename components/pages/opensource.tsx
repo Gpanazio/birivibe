@@ -13,7 +13,7 @@ export default async function OpenSource() {
       next: { revalidate: 60 },
     }
   )
-    .then((res) => res.json())
+    .then((res) => res.json() as any)
     .catch((e) => console.error(e))
 
   return (

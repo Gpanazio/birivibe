@@ -37,7 +37,7 @@ export const WeightTracker: React.FC = () => {
         try {
             const res = await fetch(`${API_BASE_URL}/api/weights`);
             if (res.ok) {
-                const data = await res.json();
+                const data = await res.json() as any;
                 // Sort for charts: oldest to newest
                 // The API returns newest first (good for list), so we reverse for charts
                 setLogs(data);

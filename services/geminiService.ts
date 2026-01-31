@@ -16,7 +16,7 @@ export const parseFoodLog = async (text: string): Promise<GeminiParsedFood[]> =>
       throw new Error(`Server Error: ${response.statusText}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
     return data as GeminiParsedFood[];
   } catch (error) {
     console.error("Error parsing food log:", error);
@@ -50,7 +50,7 @@ export const generateDietTip = async (
       };
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
     return {
       tip: data.tip || "Coma alguma coisa para eu te julgar!",
       tipIndex: data.tipIndex || 0,
@@ -76,7 +76,7 @@ export const getNextTip = async (currentIndex: number): Promise<{ tip: string; t
       return null;
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
     if (data.needsGeneration) {
       return null;
     }
@@ -107,7 +107,7 @@ export const generateWeeklyAnalysis = async (
       return "A Birianálise está indisponível no momento.";
     }
 
-    const data = await response.json();
+    const data = await response.json() as any;
     return data.analysis || "Não foi possível gerar a análise.";
   } catch (error) {
     console.error("Error generating weekly analysis:", error);

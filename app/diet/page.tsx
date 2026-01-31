@@ -37,13 +37,13 @@ function App() {
       try {
         const goalsRes = await fetch(`${API_BASE_URL}/api/diet/goals`);
         if (goalsRes.ok) {
-          const goalsData = await goalsRes.json();
+          const goalsData = await goalsRes.json() as any;
           setGoals(goalsData);
         }
 
         const logsRes = await fetch(`${API_BASE_URL}/api/diet/food-logs`);
         if (logsRes.ok) {
-          const logsData = await logsRes.json();
+          const logsData = await logsRes.json() as any;
           const groupedLogs: { [date: string]: FoodItem[] } = {};
           (logsData as FoodItem[]).forEach((item) => {
             if (item.date) {
@@ -85,7 +85,7 @@ function App() {
       });
 
       if (res.ok) {
-        const newItems = await res.json();
+        const newItems = await res.json() as any;
         if (newItems && newItems.length > 0) {
           setLogs(prev => {
             const dateKey = newItems[0].date;

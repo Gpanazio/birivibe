@@ -24,7 +24,7 @@ export async function PATCH(
     }
 
     // Edit username based on input
-    const body = await req.json()
+    const body = await req.json() as any
     const payload = userNameSchema.parse(body)
 
     await db.user.update({

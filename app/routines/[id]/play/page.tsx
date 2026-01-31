@@ -50,7 +50,7 @@ export default function PlayRoutinePage() {
       try {
         const routineRes = await fetch(`/api/routines/${routineId}`);
         if (routineRes.ok) {
-          const data = await routineRes.json();
+          const data = await routineRes.json() as any;
           setRoutine(data);
 
           // Start log
@@ -58,7 +58,7 @@ export default function PlayRoutinePage() {
             method: "POST",
           });
           if (logRes.ok) {
-            const log = await logRes.json();
+            const log = await logRes.json() as any;
             setLogId(log.id);
           }
         }

@@ -259,7 +259,7 @@ export const History: React.FC<HistoryProps> = ({ allLogs, onAddItems, onUpdateI
                 return (
                     <div
                         className="fixed inset-0 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
-                        style={{ zIndex: Z_INDEX.MODAL }}
+                        style={{ zIndex: Z_INDEX.modal }}
                         onClick={() => setSelectedDateDetails(null)}
                     >
                         <div
@@ -353,7 +353,7 @@ export const History: React.FC<HistoryProps> = ({ allLogs, onAddItems, onUpdateI
             {addingFoodForDate && createPortal(
                 <div
                     className="fixed inset-0 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
-                    style={{ zIndex: Z_INDEX.MODAL }}
+                    style={{ zIndex: Z_INDEX.modal }}
                     onClick={() => setAddingFoodForDate(null)}
                 >
                     <div
@@ -386,7 +386,7 @@ export const History: React.FC<HistoryProps> = ({ allLogs, onAddItems, onUpdateI
             {showBirianalise && createPortal(
                 <div
                     className="fixed inset-0 flex items-end md:items-center justify-center p-0 md:p-4 bg-black/80 backdrop-blur-sm animate-fade-in"
-                    style={{ zIndex: Z_INDEX.MODAL }}
+                    style={{ zIndex: Z_INDEX.modal }}
                     onClick={() => setShowBirianalise(false)}
                 >
                     <div

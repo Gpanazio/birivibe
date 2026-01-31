@@ -38,7 +38,7 @@ export const RankingMenu: React.FC<RankingMenuProps> = ({ isOpen, onClose }) => 
       try {
         const res = await fetch(`${API_BASE_URL}/api/ranking/foods?limit=5`);
         if (res.ok) {
-          setFoods(await res.json());
+          setFoods(await res.json() as any);
         }
       } catch (err) {
         console.error('Failed to fetch ranking', err);

@@ -119,7 +119,7 @@ export default function RitualsPage() {
     const fetchRituals = async () => {
       try {
         const res = await fetch("/api/rituals");
-        if (res.ok) setRituals(await res.json());
+        if (res.ok) setRituals(await res.json() as any);
       } catch (error) {
         console.error("Failed to fetch rituals:", error);
       } finally {
@@ -138,7 +138,7 @@ export default function RitualsPage() {
         body: JSON.stringify(newRitual),
       });
       if (res.ok) {
-        const ritual = await res.json();
+        const ritual = await res.json() as any;
         setRituals(prev => [...prev, ritual]);
         setShowCreate(false);
       }

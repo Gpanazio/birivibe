@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
 // PUT /api/diet/goals - atualiza metas
 export async function PUT(req: NextRequest) {
   try {
-    const body = await req.json();
+    const body = await req.json() as any;
     
     let user = await db.user.findFirst();
     if (!user) {
