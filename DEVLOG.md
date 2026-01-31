@@ -22,10 +22,11 @@
 - JSON para arrays em SQLite (daysOfWeek, stepsCompleted)
 - RoutineStep pode linkar a Habits existentes
 
-### Pendente
-- [ ] Editor de rotina (`/routines/[id]/edit`)
-- [ ] Player step-by-step (`/routines/[id]/play`)
-- [ ] Seed de rotinas exemplo
+### Concluído (2026-01-31)
+- [x] Editor de rotina (`/routines/[id]/edit`) - Builder visual com reorder, ícones, duração
+- [x] Player step-by-step (`/routines/[id]/play`) - Timer, progresso, completar/pular
+- [x] Seed de rotinas exemplo (`prisma/seed-routines.ts`) - 4 rotinas com 17 passos
+- [x] Navegação - Link "Rotinas" no dashboard sidebar
 
 ---
 

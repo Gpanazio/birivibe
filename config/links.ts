@@ -29,6 +29,21 @@ export const dashboardLinks: Navigation = {
       icon: "dashboard",
     },
     {
+      title: "Rotinas",
+      href: "/routines",
+      icon: "clock",
+    },
+    {
+      title: "Hábitos",
+      href: "/habits",
+      icon: "check",
+    },
+    {
+      title: "Dieta",
+      href: "/diet",
+      icon: "utensils",
+    },
+    {
       title: "Activities",
       href: "/dashboard/activities",
       icon: "activity",
