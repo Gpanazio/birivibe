@@ -9,16 +9,10 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
-  // ISSO AQUI É O QUE O NEXT-AUTH PRECISA NO EDGE
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      config.externals.push({
-        'node:crypto': 'commonjs crypto',
-        'node:stream': 'commonjs stream',
-        'node:url': 'commonjs url',
-      });
-    }
-    return config;
+  // Forçar o Next.js a não usar o Edge em páginas que ele acha que deve
+  // se elas estiverem quebrando o build.
+  experimental: {
+    serverComponentsExternalPackages: ['@prisma/client', 'crypto'],
   },
 };
 
