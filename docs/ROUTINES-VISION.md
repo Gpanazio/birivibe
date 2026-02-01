@@ -83,4 +83,3 @@ Sistema de rotinas diárias com onboarding conversacional, navegação semanal p
 ---
 
 *Última atualização: 2026-02-01*
-*Autor: Maycon (agente)*

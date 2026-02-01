@@ -11,8 +11,8 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: "routineIds array required" }, { status: 400 });
     }
 
-    // Atualiza a ordem de cada rotina
-    await Promise.all(
+    // Atualiza a ordem de cada rotina (atômico com transaction)
+    await db.$transaction(
       routineIds.map((id, index) =>
         db.routine.update({
           where: { id },
