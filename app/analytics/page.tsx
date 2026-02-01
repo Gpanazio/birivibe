@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import AnalyticsChart from '@/components/analytics/AnalyticsChart';
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 
 export default async function AnalyticsPage() {
   const userId = 'user-id-here'; // Replace with actual user ID logic

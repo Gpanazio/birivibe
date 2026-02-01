@@ -8,6 +8,8 @@ import { DashboardHeader } from "@/components/pages/dashboard/dashboard-header"
 import { AppearanceForm } from "@/components/settings/appearance-form"
 import { UserNameForm } from "@/components/user/user-name-form"
 
+export const runtime = 'edge';
+
 export const metadata: Metadata = {
   title: "Settings",
   description: "Manage account and app settings.",

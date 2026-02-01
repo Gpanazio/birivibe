@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+export const runtime = 'edge';
+
 // GET /api/diet/weight - busca histórico de peso
 export async function GET(req: NextRequest) {
   try {
@@ -33,7 +35,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json() as any;
-    
+
     let user = await db.user.findFirst();
     if (!user) {
       user = await db.user.create({

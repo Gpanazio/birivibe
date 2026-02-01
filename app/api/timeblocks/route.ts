@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+export const runtime = 'edge';
+
 export async function GET(req: NextRequest) {
   try {
     const user = await db.user.findFirst();
@@ -8,7 +10,7 @@ export async function GET(req: NextRequest) {
 
     const { searchParams } = new URL(req.url);
     const date = searchParams.get("date");
-    
+
     const startOfDay = date ? new Date(date) : new Date();
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date(startOfDay);

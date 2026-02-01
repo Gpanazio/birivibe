@@ -1,8 +1,10 @@
 "use client";
 
+export const runtime = 'edge';
+
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { 
+import {
   ArrowLeft, Check, SkipForward, Pause, Play,
   Clock, X, ChevronRight
 } from "lucide-react";
@@ -110,12 +112,12 @@ export default function PlayRoutinePage() {
       // Routine completed
       setIsCompleted(true);
       setIsRunning(false);
-      
+
       if (logId) {
         await fetch(`/api/routines/logs/${logId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             stepsCompleted: newCompleted,
             completed: true,
             duration: Math.floor(elapsedTime / 60),
@@ -127,7 +129,7 @@ export default function PlayRoutinePage() {
 
   const handleSkipStep = () => {
     if (!routine) return;
-    
+
     if (currentStepIndex < routine.steps.length - 1) {
       setCurrentStepIndex(prev => prev + 1);
       setStepTime(0);
@@ -139,7 +141,7 @@ export default function PlayRoutinePage() {
       await fetch(`/api/routines/logs/${logId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           stepsCompleted: completedSteps,
           duration: Math.floor(elapsedTime / 60),
         }),
@@ -186,7 +188,7 @@ export default function PlayRoutinePage() {
   }
 
   return (
-    <div 
+    <div
       className="min-h-screen flex flex-col"
       style={{ backgroundColor: `${routine.color}10` }}
     >
@@ -198,7 +200,7 @@ export default function PlayRoutinePage() {
         >
           <X className="w-6 h-6" />
         </button>
-        
+
         <div className="text-center">
           <p className="text-xs text-zinc-500 uppercase tracking-wider">{routine.name}</p>
           <p className="text-2xl font-mono font-bold text-white">{formatTime(elapsedTime)}</p>
@@ -215,7 +217,7 @@ export default function PlayRoutinePage() {
       {/* Progress Bar */}
       <div className="px-4">
         <div className="h-2 bg-black/30 rounded-full overflow-hidden">
-          <div 
+          <div
             className="h-full transition-all duration-500"
             style={{ width: `${progress}%`, backgroundColor: routine.color }}
           />
@@ -227,13 +229,13 @@ export default function PlayRoutinePage() {
 
       {/* Current Step */}
       <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-        <div 
+        <div
           className="text-8xl mb-6"
           style={{ filter: `drop-shadow(0 0 30px ${routine.color}50)` }}
         >
           {currentStep?.icon || "📌"}
         </div>
-        
+
         <h2 className="text-3xl font-black text-white mb-2">
           {currentStep?.name}
         </h2>
@@ -284,19 +286,18 @@ export default function PlayRoutinePage() {
           {routine.steps.map((step, index) => {
             const isCompleted = completedSteps.includes(step.id);
             const isCurrent = index === currentStepIndex;
-            
+
             return (
               <div
                 key={step.id}
-                className={`w-8 h-1.5 rounded-full transition-all ${
-                  isCompleted 
-                    ? "" 
-                    : isCurrent 
-                      ? "bg-white" 
+                className={`w-8 h-1.5 rounded-full transition-all ${isCompleted
+                    ? ""
+                    : isCurrent
+                      ? "bg-white"
                       : "bg-zinc-800"
-                }`}
-                style={{ 
-                  backgroundColor: isCompleted ? routine.color : undefined 
+                  }`}
+                style={{
+                  backgroundColor: isCompleted ? routine.color : undefined
                 }}
               />
             );

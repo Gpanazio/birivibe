@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+export const runtime = 'edge';
+
 // GET /api/routines/[id] - busca rotina específica
 export async function GET(
   req: NextRequest,

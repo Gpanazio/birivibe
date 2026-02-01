@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+export const runtime = 'edge';
+
 // GET /api/habits - lista todos os hábitos do usuário
 export async function GET(req: NextRequest) {
   try {

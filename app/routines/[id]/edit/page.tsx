@@ -1,8 +1,10 @@
 "use client";
 
+export const runtime = 'edge';
+
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { 
+import {
   ArrowLeft, Plus, GripVertical, Trash2, Save,
   Clock, Check, Coffee, Dumbbell, Brain, Pill
 } from "lucide-react";
@@ -49,11 +51,11 @@ const STEP_ICONS = [
   { icon: "🎯", label: "Foco" },
 ];
 
-function StepEditor({ 
-  step, 
-  index, 
+function StepEditor({
+  step,
+  index,
   habits,
-  onChange, 
+  onChange,
   onDelete,
   onMoveUp,
   onMoveDown,
@@ -75,7 +77,7 @@ function StepEditor({
   return (
     <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden">
       {/* Header */}
-      <div 
+      <div
         className="flex items-center gap-3 p-3 cursor-pointer hover:bg-zinc-800/50"
         onClick={() => setExpanded(!expanded)}
       >
@@ -97,7 +99,7 @@ function StepEditor({
         </div>
 
         <span className="text-xl">{step.icon || "📌"}</span>
-        
+
         <div className="flex-1 min-w-0">
           <p className="font-medium text-white truncate">
             {step.name || "Novo passo"}
@@ -179,11 +181,10 @@ function StepEditor({
                 <button
                   key={icon}
                   onClick={() => onChange({ ...step, icon })}
-                  className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-all ${
-                    step.icon === icon 
-                      ? "bg-purple-500 scale-110" 
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-all ${step.icon === icon
+                      ? "bg-purple-500 scale-110"
                       : "bg-zinc-800 hover:bg-zinc-700"
-                  }`}
+                    }`}
                   title={label}
                 >
                   {icon}
@@ -265,7 +266,7 @@ export default function EditRoutinePage() {
   const handleMoveStep = (index: number, direction: "up" | "down") => {
     const newIndex = direction === "up" ? index - 1 : index + 1;
     if (newIndex < 0 || newIndex >= steps.length) return;
-    
+
     const newSteps = [...steps];
     [newSteps[index], newSteps[newIndex]] = [newSteps[newIndex], newSteps[index]];
     setSteps(newSteps);
@@ -332,7 +333,7 @@ export default function EditRoutinePage() {
               </p>
             </div>
           </div>
-          
+
           <button
             onClick={handleSave}
             disabled={isSaving}

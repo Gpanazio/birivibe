@@ -2,6 +2,7 @@ import { db } from '@/lib/db';
 import { User, Goal, Habit, Ritual, Transaction, SleepLog, MoodLog, JournalEntry, FocusSession, Project, Task, WeeklyGoal, Automation, Context, Routine, RitualLog, TimeBlock, NutritionGoal, WeightLog, BodyMetric, ProgressPhoto, Workout, ExerciseLog, TemplateExercise, WorkoutTemplate, Medication, MedicationLog, HealthCondition, Appointment, HealthProfessional } from '@prisma/client';
 
 export const dynamic = 'force-dynamic';
+export const runtime = 'edge';
 
 export default async function SkillsPage() {
   const firstUser = (await db.user.findMany({ select: { id: true }, take: 1 }))[0];

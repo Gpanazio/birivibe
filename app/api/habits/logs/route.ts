@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+export const runtime = 'edge';
+
 // GET /api/habits/logs - busca logs de hábitos (últimos 30 dias por padrão)
 export async function GET(req: NextRequest) {
   try {

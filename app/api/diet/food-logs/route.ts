@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+export const runtime = 'edge';
+
 // GET /api/diet/food-logs - busca todos os logs
 export async function GET(req: NextRequest) {
   try {
@@ -44,7 +46,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const items = await req.json() as any;
-    
+
     let user = await db.user.findFirst();
     if (!user) {
       user = await db.user.create({
@@ -54,7 +56,7 @@ export async function POST(req: NextRequest) {
 
     // Suporta array ou item único
     const itemsArray = Array.isArray(items) ? items : [items];
-    
+
     const created = await Promise.all(
       itemsArray.map((item: any) =>
         db.foodLog.create({
