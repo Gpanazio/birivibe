@@ -10,10 +10,15 @@ let prisma: PrismaClient
 if (process.env.NODE_ENV === "production") {
   prisma = new PrismaClient()
 } else {
-  if (!global.cachedPrisma) {
-    global.cachedPrisma = new PrismaClient()
+  // No Cloudflare, o D1 no est disponvel durante o build, ento evitamos erros
+  if (process.env.NEXT_PHASE === "phase-production-build") {
+    prisma = {} as any
+  } else {
+    if (!global.cachedPrisma) {
+      global.cachedPrisma = new PrismaClient()
+    }
+    prisma = global.cachedPrisma
   }
-  prisma = global.cachedPrisma
 }
 
 export const db = prisma
