@@ -1,16 +1,24 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Disable image optimization (not supported on Cloudflare Pages without R2/Image Resizing)
   images: {
     unoptimized: true,
   },
-
-  // Garante que o build não quebre por causa de otimizações de imagem
   typescript: {
     ignoreBuildErrors: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  // ISSO AQUI É O QUE O NEXT-AUTH PRECISA NO EDGE
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push({
+        'node:crypto': 'commonjs crypto',
+        'node:stream': 'commonjs stream',
+        'node:url': 'commonjs url',
+      });
+    }
+    return config;
   },
 };
 
