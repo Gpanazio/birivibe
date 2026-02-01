@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
+export const dynamic = 'force-dynamic';
+
 // GET /api/diet/goals - busca metas do usuário
 export async function GET(req: NextRequest) {
   try {
@@ -40,7 +42,7 @@ export async function GET(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   try {
     const body = await req.json() as any;
-    
+
     let user = await db.user.findFirst();
     if (!user) {
       user = await db.user.create({
