@@ -8,17 +8,22 @@ declare global {
 let prisma: PrismaClient
 
 if (process.env.NODE_ENV === "production") {
-  prisma = new PrismaClient()
-} else {
-  // No Cloudflare, o D1 no est disponvel durante o build, ento evitamos erros
+  // No Cloudflare, durante o build, o D1 não está disponível.
+  // Se tentarmos instanciar o PrismaClient sem DATABASE_URL, o build falha.
   if (process.env.NEXT_PHASE === "phase-production-build") {
-    prisma = {} as any
+    prisma = new Proxy({} as PrismaClient, {
+      get: () => () => {
+        throw new Error("Prisma accessed during build phase");
+      },
+    });
   } else {
-    if (!global.cachedPrisma) {
-      global.cachedPrisma = new PrismaClient()
-    }
-    prisma = global.cachedPrisma
+    prisma = new PrismaClient()
   }
+} else {
+  if (!global.cachedPrisma) {
+    global.cachedPrisma = new PrismaClient()
+  }
+  prisma = global.cachedPrisma
 }
 
 export const db = prisma
