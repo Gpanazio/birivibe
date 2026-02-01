@@ -21,24 +21,28 @@ import { PrismaD1 } from '@prisma/adapter-d1'
 import { getRequestContext } from '@cloudflare/next-on-pages'
 
 if (process.env.NODE_ENV === "production") {
-  // Check if we are in the Edge Runtime
-  const isEdge = process.env.NEXT_RUNTIME === 'edge';
-
-  if (isEdge) {
-    try {
-      const adapter = new PrismaD1((getRequestContext().env as any).BIRILIFE)
-      prisma = new PrismaClient({ adapter })
-    } catch (e) {
-      // Fallback for build time or if getRequestContext fails
-      console.warn("Failed to initialize PrismaD1, falling back to proxy or default.", e)
-      prisma = createBuildProxy() as PrismaClient;
-    }
+  // If we are in the build phase, always use the proxy to avoid initialization errors
+  if (process.env.NEXT_PHASE === "phase-production-build") {
+    prisma = createBuildProxy() as PrismaClient;
   } else {
-    // Node.js runtime (or build)
-    if (process.env.NEXT_PHASE === "phase-production-build" || !process.env.DATABASE_URL) {
-      prisma = createBuildProxy() as PrismaClient;
+    // Runtime check
+    const isEdge = process.env.NEXT_RUNTIME === 'edge';
+
+    if (isEdge) {
+      try {
+        const adapter = new PrismaD1((getRequestContext().env as any).BIRILIFE)
+        prisma = new PrismaClient({ adapter })
+      } catch (e) {
+        console.warn("Failed to initialize PrismaD1, falling back to proxy or default.", e)
+        prisma = createBuildProxy() as PrismaClient;
+      }
     } else {
-      prisma = new PrismaClient()
+      // Node.js runtime fallback
+      if (!process.env.DATABASE_URL) {
+        prisma = createBuildProxy() as PrismaClient;
+      } else {
+        prisma = new PrismaClient()
+      }
     }
   }
 } else {
