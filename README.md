@@ -1,43 +1,102 @@
-# BiriVibe OS - Technical Documentation
+# BiriVibe 🌟
 
-## 1. Vision
-BiriVibe OS is a centralized "Life Operating System" designed to aggregate health, habits, productivity, and finance into a single, friction-less dashboard. It uses AI (Douglas) to eliminate the burden of manual logging.
+> **"Um dia de cada vez"** - App de vida que te abraça, não te julga.
 
-## 2. Technical Stack
+## 🧘 Filosofia Central
+
+BiriVibe é diferente de outros apps de hábitos/produtividade. Nossa filosofia:
+
+| Outros Apps | BiriVibe |
+|-------------|----------|
+| "Você perdeu seu streak" 😢 | "Hoje é um novo dia!" 🎉 |
+| "3 dias sem completar..." | "Que bom te ver!" |
+| Começa segunda-feira | Começa **AGORA** |
+| Foco em sequências | Foco em **HOJE** |
+| Julga quando falha | Abraça quando volta |
+
+### Os 5 Pilares
+1. 📅 **HOJE é o que importa** - Não ontem, não amanhã
+2. 🔄 **Recomeçar é AGORA** - Não "segunda-feira"
+3. 🎯 **Um passo de cada vez** - "Só por hoje"
+4. 🤝 **Sem julgamento** - App é amigo, não juiz
+5. 💪 **Progresso > Perfeição** - Feito > Perfeito
+
+> Ver documentação completa: `docs/PHILOSOPHY.md`
+
+---
+
+## 🎮 Features
+
+### Módulos (usuário escolhe quais ativar)
+- 🌅 **Rotinas** - Organize seu dia com blocos de atividades
+- ✅ **Hábitos** - Acompanhe hábitos diários
+- 🍎 **Dieta** - Controle alimentação
+- 🎯 **Metas** - Defina e acompanhe objetivos
+- 🧰 **Ferramentas** - Timer, Pomodoro, etc
+
+### Gamificação (estilo Duolingo)
+- 🔥 Streaks (com recuperação!)
+- ⭐ Sistema de XP
+- 🏆 Ligas semanais
+- 🎖️ Conquistas/Badges
+- 💎 Moeda virtual
+
+### UX Anti-Abandono
+- Navegação semanal por carousel (swipe)
+- Templates por categoria
+- Drag & drop para reordenar
+- Cards expansíveis
+- Psicologia positiva em todas as mensagens
+
+---
+
+## 🛠️ Stack Técnica
+
 - **Framework:** Next.js 14 (App Router)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS + Shadcn/UI
-- **Database:** SQLite (local) / Cloudflare D1 (production)
+- **Database:** SQLite (local) / Cloudflare D1 (prod)
 - **ORM:** Prisma
-- **AI Engine:** Google Gemini 2.5 Flash Lite
-- **Deployment:** Cloudflare Pages
-
-## 3. Data Architecture (Master Schema)
-The system is built around a multi-user schema:
-- **Rotina:** `Habit` & `HabitLog` (checks and metrics).
-- **Performance:** `Workout` & `ExerciseLog` (weight/volume tracking).
-- **Vitality:** `SleepLog` & `MoodLog` (energy/quality correlation).
-- **Capital:** `Transaction` (quick finance logging).
-- **Body:** `BodyMetric` (weight/fat evolution).
-
-## 4. AI Ingestion Engine (The BiriBrain)
-Located at `/api/ingest`, the engine takes raw text (The Daily Dump) and:
-1. Maps it to existing user activities.
-2. Extracts numerical values (counts/weights).
-3. Identifies intent (habit completion vs mood check-in).
-4. Saves data to specific tables in the database.
-5. Returns a sarcastic, personalized commentary (Douglas persona).
-
-## 5. UI/UX Principles
-- **OLED Black:** Background #000 for maximum focus and energy saving on mobile.
-- **TDAH-Friendly:** Density over whitespace. Minimal clicks. Fast feedback.
-- **Terminal Aesthetics:** Monospace fonts and system-like logs for transparency.
-
-## 6. How to Deploy (Planned)
-1. Initialize Cloudflare D1.
-2. Configure `wrangler.toml`.
-3. Set environment variables (GEMINI_API_KEY, NEXTAUTH_SECRET).
-4. Run `npx prisma db push` targeting the D1 adapter.
+- **Drag & Drop:** @dnd-kit
+- **AI:** LLM para onboarding personalizado
 
 ---
-*Created: 2026-01-31*
+
+## 📚 Documentação
+
+| Arquivo | Descrição |
+|---------|-----------|
+| `docs/PHILOSOPHY.md` | Filosofia e princípios do produto |
+| `docs/ROUTINES-VISION.md` | Visão do módulo de rotinas |
+| `docs/ONBOARDING-VISION.md` | Fluxo de onboarding |
+| `docs/GAMIFICATION.md` | Sistema de gamificação |
+| `TODO.md` | Roadmap e tasks |
+
+---
+
+## ⚠️ Nota Importante
+
+O assistente dentro do app BiriVibe **NÃO é "Douglas"**. 
+
+Douglas é um bot pessoal separado. O assistente do BiriVibe terá nome/marca própria (a definir).
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# Instalar dependências
+npm install
+
+# Rodar em dev
+npm run dev
+
+# Abrir
+http://localhost:3000
+```
+
+---
+
+*"O melhor momento pra começar era ontem. O segundo melhor é agora."*
+
+*Criado com 💜 por Gabriel Panazio*

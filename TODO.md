@@ -2,6 +2,12 @@
 
 ## 🎯 Prioridade Alta
 
+### Onboarding Geral do App
+- [ ] **Seleção de Módulos** - Usuário escolhe o que quer controlar (Rotinas, Hábitos, Dieta, Metas...)
+- [ ] **Configuração de Preferências** - Nível de detalhe, notificações, frequência
+- [ ] **Ativação Progressiva** - Nem todos módulos precisam estar ativos
+- [ ] **Personalização de Menu** - Mostrar só o que o usuário escolheu
+
 ### Módulo de Rotinas
 - [ ] **Carousel Semanal** - Navegação horizontal por dia (task: `TASK-WEEKLY-CAROUSEL.md`)
 - [ ] **Templates por Categoria** - Agrupar templates em categorias expandíveis (task: `TASK-TEMPLATE-CATEGORIES.md`)
@@ -39,6 +45,23 @@
 
 ---
 
+## 🎮 Gamificação (Estilo Duolingo)
+
+Ver documentação completa: `docs/GAMIFICATION.md`
+
+- [ ] **Streaks** - Dias consecutivos, proteção com "freeze"
+- [ ] **XP System** - Pontos por completar atividades
+- [ ] **Níveis** - Progressão (Iniciante → Lenda)
+- [ ] **Ligas Semanais** - Rankings competitivos (Bronze → Obsidian)
+- [ ] **Conquistas** - Badges desbloqueáveis
+- [ ] **Moeda Virtual (Gems)** - Comprar skins, freezes, etc
+- [ ] **Meta Diária** - XP alvo configurável
+- [ ] **Feedback Visual** - Confetes, animações, sons
+- [ ] **Mascote** - Personagem do BiriVibe (?)
+- [ ] **Notificações Persuasivas** - FOMO, celebração
+
+---
+
 ## 💡 Prioridade Baixa / Ideias
 
 ### Módulo de Rotinas
@@ -46,7 +69,6 @@
 - [ ] **Compartilhar Rotina** - Exportar/importar rotinas
 - [ ] **Templates da Comunidade** - Marketplace de rotinas
 - [ ] **IA Sugestões** - "Você sempre pula meditação às segundas, remover?"
-- [ ] **Gamificação** - Streaks, achievements, XP
 
 ### Social
 - [ ] **Perfil Público** - Mostrar rotinas/conquistas
