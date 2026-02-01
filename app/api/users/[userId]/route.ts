@@ -1,11 +1,11 @@
-import { getServerSession } from "next-auth/next"
+import { getToken } from "next-auth/jwt"
+import { NextRequest } from "next/server"
 import { z } from "zod"
 
-import { authOptions } from "@/lib/auth"
 import { db } from "@/lib/db"
 import { userNameSchema } from "@/lib/validations/user"
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 const routeContextSchema = z.object({
   params: z.object({
@@ -14,14 +14,14 @@ const routeContextSchema = z.object({
 })
 
 export async function PATCH(
-  req: Request,
+  req: NextRequest,
   context: z.infer<typeof routeContextSchema>
 ) {
   try {
     const { params } = routeContextSchema.parse(context)
-    const session = await getServerSession(authOptions)
+    const token = await getToken({ req })
 
-    if (!session?.user || params.userId !== session?.user.id) {
+    if (!token || params.userId !== token.id) {
       return new Response(null, { status: 403 })
     }
 
@@ -31,7 +31,7 @@ export async function PATCH(
 
     await db.user.update({
       where: {
-        id: session.user.id,
+        id: token.id as string,
       },
       data: {
         name: payload.name,

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 // PUT /api/diet/food-logs/[id] - atualiza um log
 export async function PUT(

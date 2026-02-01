@@ -20,7 +20,8 @@ const createBuildProxy = (): any => {
 if (process.env.NODE_ENV === "production") {
   // No Cloudflare, durante o build, o D1 não está disponível.
   // Se tentarmos instanciar o PrismaClient sem DATABASE_URL, o build falha.
-  if (process.env.NEXT_PHASE === "phase-production-build") {
+  // Check if DATABASE_URL is present. If not, assume build phase or misconfiguration.
+  if (process.env.NEXT_PHASE === "phase-production-build" || !process.env.DATABASE_URL) {
     prisma = createBuildProxy() as PrismaClient;
   } else {
     prisma = new PrismaClient()

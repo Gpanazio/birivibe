@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 // PUT /api/routines/reorder - atualiza ordem das rotinas
 export async function PUT(req: NextRequest) {

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 // GET /api/routines/[id] - busca rotina específica
 export async function GET(

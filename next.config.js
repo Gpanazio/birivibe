@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Cloudflare Pages config
-  output: 'standalone',
+  // output: 'standalone',
 
   // Disable image optimization (not supported on Cloudflare Pages)
   images: {
@@ -22,7 +22,7 @@ const nextConfig = {
 
     if (isServer) {
       // Exclude problematic packages from server bundle
-      config.externals = [...(config.externals || []), 'crypto']
+      config.externals = [...(config.externals || []), 'crypto', 'stream', 'http', 'https', 'zlib', 'net', 'tls', 'os', 'path', 'url', 'querystring']
     }
     return config
   },
