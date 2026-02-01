@@ -2,7 +2,8 @@ import { db } from '@/lib/db';
 import { User, Goal, Habit, Ritual, Transaction, SleepLog, MoodLog, JournalEntry, FocusSession, Project, Task, WeeklyGoal, Automation, Context, Routine, RitualLog, TimeBlock, NutritionGoal, WeightLog, BodyMetric, ProgressPhoto, Workout, ExerciseLog, TemplateExercise, WorkoutTemplate, Medication, MedicationLog, HealthCondition, Appointment, HealthProfessional } from '@prisma/client';
 
 export default async function SkillsPage() {
-  const [userId] = (await db.user.findMany({ select: { id: true }, take: 1 }))[0]?.id || '';
+  const firstUser = (await db.user.findMany({ select: { id: true }, take: 1 }))[0];
+  const userId = firstUser?.id || '';
 
   // Físico
   const physicalSkills = await db.$transaction([
@@ -30,7 +31,7 @@ export default async function SkillsPage() {
     db.goal.count({ where: { userId, area: 'finanças' } }),
     db.habit.count({ where: { userId, category: 'Financeiro' } }),
     db.transaction.count({ where: { userId } }),
-    db.automation.count({ where: { userId, triggerType: 'goal_progress', actionType: 'add_xp' }, name: { contains: 'financeiro' } }),
+    db.automation.count({ where: { userId, triggerType: 'goal_progress', actionType: 'add_xp', name: { contains: 'financeiro' } } }),
   ]);
 
   return (
