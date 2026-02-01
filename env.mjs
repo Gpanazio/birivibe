@@ -9,8 +9,8 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
     GITHUB_CLIENT_ID: z.string().min(1).optional(),
     GITHUB_CLIENT_SECRET: z.string().min(1).optional(),
-    DATABASE_URL: z.string().min(1),
-    GEMINI_API_KEY: z.string().min(1),
+    DATABASE_URL: z.string().min(1).optional(), // Optional for D1 (uses bindings)
+    GEMINI_API_KEY: z.string().min(1).optional(), // Optional - set in Cloudflare dashboard
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().min(1).optional(),
