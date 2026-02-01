@@ -3,6 +3,9 @@ compatibility_date = "2024-12-01"
 compatibility_flags = ["nodejs_compat"]
 pages_build_output_dir = ".vercel/output/static"
 
+[build]
+command = "npx @cloudflare/next-on-pages"
+
 [vars]
 NODE_ENV = "production"
 
@@ -10,3 +13,4 @@ NODE_ENV = "production"
 binding = "BIRILIFE"
 database_name = "BIRILIFE"
 database_id = "f0eb042b-ec99-4149-a449-27812b56792c"
+
