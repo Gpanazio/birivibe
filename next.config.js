@@ -22,7 +22,7 @@ const nextConfig = {
 
     if (isServer) {
       // Exclude problematic packages from server bundle
-      config.externals = config.externals || []
+      config.externals = [...(config.externals || []), 'crypto']
     }
     return config
   },
