@@ -9,6 +9,8 @@ import { dateRangeParams } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ActivityList } from "@/components/activity/activity-list"
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: "BiriSims Cockpit",
   description: "Your life simulator.",
@@ -22,8 +24,8 @@ function NeedsBar({ label, value, colorClass }: { label: string, value: number, 
         <span className="terminal-font text-[10px] text-zinc-600">{Math.round(value)}%</span>
       </div>
       <div className="h-2 w-full bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
-        <div 
-          className={`h-full transition-all duration-1000 ${colorClass}`} 
+        <div
+          className={`h-full transition-all duration-1000 ${colorClass}`}
           style={{ width: `${value}%` }}
         ></div>
       </div>
@@ -56,8 +58,8 @@ export default async function Dashboard({ searchParams }: { searchParams: { from
           </div>
         </div>
         <div className="text-right">
-            <p className="terminal-font text-xs text-zinc-500 uppercase">Status do Jogador</p>
-            <p className="text-xl font-black text-white uppercase">{user.name.split(' ')[0]}</p>
+          <p className="terminal-font text-xs text-zinc-500 uppercase">Status do Jogador</p>
+          <p className="text-xl font-black text-white uppercase">{user.name.split(' ')[0]}</p>
         </div>
       </div>
 
@@ -72,12 +74,12 @@ export default async function Dashboard({ searchParams }: { searchParams: { from
           <NeedsBar label="Capital (Grana)" value={data.needs.capital} colorClass="bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
           <NeedsBar label="Social (Consistência)" value={data.needs.overall} colorClass="bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
           <div className="pt-2">
-             <div className="flex items-center gap-2 px-3 py-2 bg-zinc-900 rounded border border-zinc-800">
-                <span className="animate-pulse text-purple-500">✦</span>
-                <p className="text-[10px] text-zinc-400 font-medium italic truncate">
-                  {`"O jogador parece focado, mas a barra de capital está sofrendo."`}
-                </p>
-             </div>
+            <div className="flex items-center gap-2 px-3 py-2 bg-zinc-900 rounded border border-zinc-800">
+              <span className="animate-pulse text-purple-500">✦</span>
+              <p className="text-[10px] text-zinc-400 font-medium italic truncate">
+                {`"O jogador parece focado, mas a barra de capital está sofrendo."`}
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -94,26 +96,26 @@ export default async function Dashboard({ searchParams }: { searchParams: { from
         </div>
 
         <div className="md:col-span-2 space-y-6">
-           <div className="border border-zinc-900 bg-zinc-950/50 rounded-xl p-6">
-              <h3 className="terminal-font text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-4">Buffs Ativos (Logs de Hoje)</h3>
-              <div className="flex flex-wrap gap-2">
-                 {data.logs.slice(0, 8).map((log: any, i: number) => (
-                    <span key={i} className="px-3 py-1 bg-zinc-900 text-zinc-300 text-[10px] font-bold rounded-full border border-zinc-800">
-                      +{log.habit?.name || "Registro"}
-                    </span>
-                 ))}
-                 {data.logs.length === 0 && <span className="text-zinc-700 text-[10px] italic underline">Nenhum buff ativo. Vá trabalhar.</span>}
-              </div>
-           </div>
+          <div className="border border-zinc-900 bg-zinc-950/50 rounded-xl p-6">
+            <h3 className="terminal-font text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-4">Buffs Ativos (Logs de Hoje)</h3>
+            <div className="flex flex-wrap gap-2">
+              {data.logs.slice(0, 8).map((log: any, i: number) => (
+                <span key={i} className="px-3 py-1 bg-zinc-900 text-zinc-300 text-[10px] font-bold rounded-full border border-zinc-800">
+                  +{log.habit?.name || "Registro"}
+                </span>
+              ))}
+              {data.logs.length === 0 && <span className="text-zinc-700 text-[10px] italic underline">Nenhum buff ativo. Vá trabalhar.</span>}
+            </div>
+          </div>
 
-           <div className="border border-zinc-900 bg-zinc-950/50 rounded-xl p-6 relative overflow-hidden group cursor-pointer hover:border-purple-500 transition-colors">
-              <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-100 transition-opacity">
-                 <span className="text-[40px]">⌨️</span>
-              </div>
-              <h3 className="terminal-font text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">Console de Comando</h3>
-              <p className="text-lg font-bold text-white mb-4">Daily Dump</p>
-              <a href="/biri" className="inline-block px-4 py-2 bg-purple-600 text-white text-[10px] font-black rounded uppercase hover:bg-purple-500">Abrir_Terminal</a>
-           </div>
+          <div className="border border-zinc-900 bg-zinc-950/50 rounded-xl p-6 relative overflow-hidden group cursor-pointer hover:border-purple-500 transition-colors">
+            <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-100 transition-opacity">
+              <span className="text-[40px]">⌨️</span>
+            </div>
+            <h3 className="terminal-font text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">Console de Comando</h3>
+            <p className="text-lg font-bold text-white mb-4">Daily Dump</p>
+            <a href="/biri" className="inline-block px-4 py-2 bg-purple-600 text-white text-[10px] font-black rounded uppercase hover:bg-purple-500">Abrir_Terminal</a>
+          </div>
         </div>
       </div>
     </div>

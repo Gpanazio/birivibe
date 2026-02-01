@@ -4,6 +4,8 @@ import { ArrowLeft, CheckCircle2, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { Suspense } from 'react';
 
+export const dynamic = 'force-dynamic';
+
 // Type for Goal with its children relation
 type GoalWithChildren = Goal & { children?: Goal[] };
 
@@ -71,8 +73,8 @@ function GoalCard({ goal }: { goal: GoalWithChildren }) {
               <span
                 key={child.id}
                 className={`text-xs px-2 py-0.5 rounded-full ${child.status === 'completed'
-                    ? 'bg-green-600/20 text-green-400'
-                    : 'bg-gray-700/50 text-gray-300'
+                  ? 'bg-green-600/20 text-green-400'
+                  : 'bg-gray-700/50 text-gray-300'
                   }`}
               >
                 {child.name}
