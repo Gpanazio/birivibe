@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Settings, Tag, Zap, Plus, Trash2, ChevronRight } from "lucide-react";
+import { Settings, Tag, Zap, Plus, Trash2, ChevronRight, ArrowLeft, Home } from "lucide-react";
 import Link from "next/link";
 
 interface Context {
@@ -47,10 +47,10 @@ export default function SettingsPage() {
   const [automations, setAutomations] = useState<Automation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"contexts" | "automations">("contexts");
-  
+
   const [showAddContext, setShowAddContext] = useState(false);
   const [newContext, setNewContext] = useState({ name: "", icon: "📍", color: "#6b7280", type: "location" });
-  
+
   const [showAddAutomation, setShowAddAutomation] = useState(false);
   const [newAutomation, setNewAutomation] = useState({
     name: "",
@@ -124,12 +124,22 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen bg-black text-white">
-      <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-zinc-800/50 px-4 py-4">
-        <div className="max-w-2xl mx-auto">
-          <h1 className="text-2xl font-black tracking-tight flex items-center gap-2">
-            <Settings className="w-6 h-6 text-zinc-400" />
-            CONFIGURAÇÕES
-          </h1>
+      <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-zinc-800/50 px-4 py-3">
+        <div className="max-w-2xl mx-auto flex items-center gap-3">
+          <Link href="/" className="p-2 -ml-2 hover:bg-zinc-800 rounded-full transition-colors">
+            <ArrowLeft className="w-5 h-5 text-zinc-400" />
+          </Link>
+
+          <div className="flex-1">
+            <h1 className="text-xl font-black tracking-tight flex items-center gap-2">
+              <Settings className="w-5 h-5 text-zinc-400" />
+              CONFIGURAÇÕES
+            </h1>
+          </div>
+
+          <Link href="/" className="p-2 hover:bg-zinc-800 rounded-full transition-colors">
+            <Home className="w-5 h-5 text-zinc-400" />
+          </Link>
         </div>
       </header>
 
@@ -138,18 +148,16 @@ export default function SettingsPage() {
         <div className="flex gap-2">
           <button
             onClick={() => setActiveTab("contexts")}
-            className={`flex-1 py-3 rounded-xl font-bold flex items-center justify-center gap-2 ${
-              activeTab === "contexts" ? "bg-purple-500 text-white" : "bg-zinc-900 text-zinc-400"
-            }`}
+            className={`flex-1 py-3 rounded-xl font-bold flex items-center justify-center gap-2 ${activeTab === "contexts" ? "bg-purple-500 text-white" : "bg-zinc-900 text-zinc-400"
+              }`}
           >
             <Tag className="w-4 h-4" />
             Contextos
           </button>
           <button
             onClick={() => setActiveTab("automations")}
-            className={`flex-1 py-3 rounded-xl font-bold flex items-center justify-center gap-2 ${
-              activeTab === "automations" ? "bg-purple-500 text-white" : "bg-zinc-900 text-zinc-400"
-            }`}
+            className={`flex-1 py-3 rounded-xl font-bold flex items-center justify-center gap-2 ${activeTab === "automations" ? "bg-purple-500 text-white" : "bg-zinc-900 text-zinc-400"
+              }`}
           >
             <Zap className="w-4 h-4" />
             Automações
@@ -193,7 +201,7 @@ export default function SettingsPage() {
             <div className="space-y-2">
               <p className="text-xs text-zinc-500 uppercase tracking-wider">Sugestões</p>
               <div className="flex flex-wrap gap-2">
-                {CONTEXT_TYPES.flatMap(type => 
+                {CONTEXT_TYPES.flatMap(type =>
                   type.examples.map(ex => (
                     <button
                       key={ex}

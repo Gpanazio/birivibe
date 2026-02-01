@@ -1,140 +1,105 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
+import Link from "next/link";
+import { ArrowLeft, Home } from "lucide-react";
 
-export default function BiriPage() {
+interface OutputItem {
+  type: 'response' | 'error';
+  content: unknown;
+}
+
+export default function NeuralTerminal() {
   const [input, setInput] = useState("");
-  const [logs, setLogs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-  const scrollRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [logs]);
+  const [output, setOutput] = useState<OutputItem[]>([]);
+  const [isSending, setIsSending] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || loading) return;
+    if (!input.trim()) return;
 
-    setLoading(true);
-    setError("");
+    setIsSending(true);
     try {
-      const res = await fetch("/api/ingest", {
+      const response = await fetch("/api/ingest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ text: input }),
       });
-      const data = await res.json() as any;
-
-      if (!res.ok) throw new Error(data.error || "Failed to process");
-
-      setLogs(prev => [...prev, {
-        input,
-        result: data.logs,
-        commentary: data.commentary,
-        timestamp: new Date().toLocaleTimeString()
-      }]);
-      setInput("");
-    } catch (err: any) {
-      setError(err.message);
+      const data = await response.json();
+      setOutput((prev) => [...prev, { type: "response", content: data }]);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      setOutput((prev) => [...prev, { type: "error", content: errorMessage }]);
     } finally {
-      setLoading(false);
+      setIsSending(false);
+      setInput("");
     }
   };
 
   return (
-    <div className="min-h-screen bg-black text-white font-mono p-4 flex flex-col selection:bg-purple-500 selection:text-white">
-      <header className="mb-6 border-b border-zinc-800 pb-4 flex justify-between items-end">
-        <div>
-          <h1 className="text-2xl font-black tracking-tighter text-purple-500 italic">
-            BIRIVIBE<span className="text-zinc-500">.OS</span>
-          </h1>
-          <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
-            Neural Interface // Core: Gemini-2.5-Flash-Lite // Session: Active
-          </p>
+    <div className="h-screen w-full bg-black text-lime-400 font-mono overflow-hidden flex flex-col">
+      {/* Header with Navigation */}
+      <header className="shrink-0 flex items-center gap-3 px-4 py-3 border-b border-lime-400/20">
+        <Link href="/" className="p-2 -ml-2 hover:bg-lime-400/10 rounded-full transition-colors">
+          <ArrowLeft className="w-5 h-5" />
+        </Link>
+        <div className="flex-1">
+          <h1 className="text-lg font-bold">🧠 Daily Dump</h1>
+          <p className="text-[10px] text-lime-400/50">BiriVibe Neural Terminal v1.0</p>
         </div>
-        <div className="text-[10px] text-zinc-600">
-          STATION: MACBOOK_M4_GABRIEL
-        </div>
+        <Link href="/" className="p-2 hover:bg-lime-400/10 rounded-full transition-colors">
+          <Home className="w-5 h-5" />
+        </Link>
       </header>
+      <div className="p-4 h-full flex flex-col">
+        {/* Terminal Header */}
+        <div className="text-xs mb-2 opacity-50">BiriVibe Neural Terminal v1.0</div>
 
-      <div ref={scrollRef} className="flex-1 overflow-auto space-y-6 mb-4 scrollbar-hide">
-        {logs.length === 0 && (
-          <div className="text-zinc-700 text-sm animate-pulse">
-            [SYS] WAITING FOR DAILY DUMP...
-            <br />
-            {"> TRY: \"WORKOUT DONE, READ 20 PAGES, TOOK MEDS.\""}
-          </div>
-        )}
-
-        {logs.map((log, i) => (
-          <div key={i} className="space-y-2 group">
-            <div className="flex items-center text-xs text-zinc-600">
-              <span className="mr-2">[{log.timestamp}]</span>
-              <div className="h-[1px] flex-1 bg-zinc-900 group-hover:bg-zinc-800 transition-colors"></div>
+        {/* Output Area with Scanlines */}
+        <div className="flex-grow overflow-y-auto relative">
+          {output.map((item, index) => (
+            <div key={index} className={`mb-4 p-2 bg-black/50 rounded ${item.type === "error" ? "border border-red-500" : ""}`}>
+              <span className="text-xs text-gray-400">[RESPONSE]</span>
+              <pre className="whitespace-pre-wrap">{JSON.stringify(item.content, null, 2)}</pre>
             </div>
+          ))}
+        </div>
 
-            <div className="flex items-start">
-              <span className="text-purple-500 mr-3 shrink-0">GABRIEL:</span>
-              <span className="text-zinc-300">{log.input}</span>
-            </div>
+        {/* Input Area with Glow Effect */}
+        <form onSubmit={handleSubmit} className="flex gap-2">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Type your Daily Dump here..."
+            className="flex-grow bg-black/30 border border-lime-400 rounded px-3 py-2 text-white focus:outline-none focus:border-lime-500"
+          />
+          <button
+            type="submit"
+            disabled={isSending}
+            className={`px-4 py-2 rounded ${isSending ? "bg-gray-600" : "bg-lime-400 hover:bg-lime-500"} transition-colors`}
+          >
+            {isSending ? "Processing..." : "Send"}
+          </button>
+        </form>
 
-            <div className="pl-6 space-y-1">
-              {log.result.length > 0 ? (
-                log.result.map((r: any, j: number) => (
-                  <div key={j} className="text-cyan-500 flex items-center text-sm">
-                    <span className="mr-2">●</span>
-                    <span>LOGGED: {r.name}</span>
-                    <span className="ml-auto text-[10px] text-zinc-700">COUNT: {r.count}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="text-yellow-600 text-sm italic">[!] NO HABITS RECOGNIZED</div>
-              )}
-            </div>
+        {/* Scanline Effect */}
+        <div className="absolute inset-0 pointer-events-none">
+          <svg width="100%" height="100%">
+            <defs>
+              <pattern id="scanlines" patternUnits="userSpaceOnUse" width="2" height="2">
+                <rect width="2" height="1" fill="rgba(38, 38, 38, 0.5)" />
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#scanlines)" />
+          </svg>
+        </div>
 
-            {log.commentary && (
-              <div className="pl-6 text-purple-400 text-sm italic font-medium">
-                <span className="mr-2 text-zinc-700">DOUGLAS:</span>
-                {`"${log.commentary}"`}
-              </div>
-            )}
-          </div>
-        ))}
-
-        {loading && (
-          <div className="text-purple-500 animate-pulse text-xs tracking-widest uppercase">
-            [PROC] DOUGLAS IS THINKING...
-          </div>
-        )}
-
-        {error && (
-          <div className="text-red-500 text-xs border border-red-900/50 bg-red-900/10 p-2 uppercase tracking-tighter">
-            [FAULT] {error}
-          </div>
-        )}
+        {/* Glow Effect */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="w-full h-full bg-gradient-to-b from-lime-400/5 to-transparent opacity-20 blur-sm" />
+        </div>
       </div>
-
-      <form onSubmit={handleSubmit} className="relative mt-auto border-t border-zinc-800 pt-4 z-10">
-        <div className="absolute left-4 top-1/2 -translate-y-1/2 text-purple-500 font-bold select-none pointer-events-none">
-          &gt;
-        </div>
-        <input
-          type="text"
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          className="w-full bg-zinc-900 border border-zinc-800 text-white pl-10 pr-24 py-4 rounded focus:outline-none focus:ring-1 focus:ring-purple-500 placeholder:text-zinc-800"
-          placeholder="ENTER DAILY LOG..."
-          disabled={loading}
-          autoFocus
-        />
-        <div className="absolute right-0 top-1/2 -translate-y-1/2 text-[10px] text-zinc-600 font-bold tracking-tighter uppercase pointer-events-none">
-          {loading ? "BUSY" : "READY_FOR_INPUT"}
-        </div>
-      </form>
     </div>
   );
 }

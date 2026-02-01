@@ -2,7 +2,7 @@
   "name": "Iotawise",
   "short_name": "Iotawise",
   "description": "Track daily habits and monitor your progress with little effort.",
-  "start_url": "https://iotawise.rdev.pro",
+  "start_url": "/",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",

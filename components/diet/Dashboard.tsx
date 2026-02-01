@@ -119,7 +119,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ todayItems, recentLogs, go
     if (!dietTip) {
       fetchTip();
     }
-  }, [recentLogs.length]); // Only re-run when log count changes significantly
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recentLogs.length]); // dietTip, goals intentionally excluded to prevent infinite loops
 
   // Fetch current streak
   useEffect(() => {

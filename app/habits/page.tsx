@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { Check, Plus, Flame, Target, Calendar, ChevronLeft, ChevronRight } from "lucide-react";
+import { Check, Plus, Flame, Target, Calendar, ChevronLeft, ChevronRight, ArrowLeft, Home } from "lucide-react";
+import Link from "next/link";
 
 interface Habit {
   id: string;
@@ -25,24 +26,24 @@ interface HabitLog {
 function getDateRange(days: number): string[] {
   const dates: string[] = [];
   const today = new Date();
-  
+
   for (let i = days - 1; i >= 0; i--) {
     const d = new Date(today);
     d.setDate(d.getDate() - i);
     dates.push(d.toISOString().split("T")[0]);
   }
-  
+
   return dates;
 }
 
-function HabitRow({ 
-  habit, 
-  logs, 
-  dates, 
-  onToggle 
-}: { 
-  habit: Habit; 
-  logs: HabitLog[]; 
+function HabitRow({
+  habit,
+  logs,
+  dates,
+  onToggle
+}: {
+  habit: Habit;
+  logs: HabitLog[];
   dates: string[];
   onToggle: (habitId: string, date: string, isCompleted: boolean) => void;
 }) {
@@ -59,7 +60,7 @@ function HabitRow({
     let count = 0;
     const today = new Date().toISOString().split("T")[0];
     const sortedDates = [...dates].reverse();
-    
+
     for (const date of sortedDates) {
       if (completedDates.has(date)) {
         count++;
@@ -67,7 +68,7 @@ function HabitRow({
         break;
       }
     }
-    
+
     return count;
   }, [completedDates, dates]);
 
@@ -76,7 +77,7 @@ function HabitRow({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div 
+          <div
             className="w-10 h-10 rounded-xl flex items-center justify-center text-lg"
             style={{ backgroundColor: `${habit.color}20` }}
           >
@@ -89,7 +90,7 @@ function HabitRow({
             )}
           </div>
         </div>
-        
+
         {streak > 0 && (
           <div className="flex items-center gap-1 px-2 py-1 bg-orange-500/20 rounded-lg">
             <Flame className="w-4 h-4 text-orange-400" />
@@ -103,16 +104,15 @@ function HabitRow({
         {dates.map((date) => {
           const isCompleted = completedDates.has(date);
           const isToday = date === new Date().toISOString().split("T")[0];
-          
+
           return (
             <button
               key={date}
               onClick={() => onToggle(habit.id, date, isCompleted)}
-              className={`flex-1 aspect-square rounded-lg transition-all ${
-                isCompleted 
-                  ? "scale-100" 
-                  : "bg-zinc-800 hover:bg-zinc-700"
-              } ${isToday ? "ring-2 ring-white/30" : ""}`}
+              className={`flex-1 aspect-square rounded-lg transition-all ${isCompleted
+                ? "scale-100"
+                : "bg-zinc-800 hover:bg-zinc-700"
+                } ${isToday ? "ring-2 ring-white/30" : ""}`}
               style={{
                 backgroundColor: isCompleted ? habit.color : undefined,
               }}
@@ -179,7 +179,7 @@ export default function HabitsPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ habitId, date }),
         });
-        
+
         if (res.ok) {
           const newLog = await res.json() as any;
           setLogs(prev => [...prev, { ...newLog, date: date }]);
@@ -229,23 +229,31 @@ export default function HabitsPage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-zinc-800/50 px-4 py-4">
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-black tracking-tight">
-              BIRI<span className="text-purple-400">ROTINA</span>
+      <header className="sticky top-0 z-50 bg-black/80 backdrop-blur-xl border-b border-zinc-800/50 px-4 py-3">
+        <div className="max-w-2xl mx-auto flex items-center gap-3">
+          <Link href="/" className="p-2 -ml-2 hover:bg-zinc-800 rounded-full transition-colors">
+            <ArrowLeft className="w-5 h-5 text-zinc-400" />
+          </Link>
+
+          <div className="flex-1">
+            <h1 className="text-xl font-black tracking-tight">
+              ✓ HÁBITOS
             </h1>
             <p className="text-[10px] text-zinc-500 uppercase tracking-widest">
-              Módulo Hábitos • {new Date().toLocaleDateString("pt-BR")}
+              {new Date().toLocaleDateString("pt-BR")}
             </p>
           </div>
-          
+
           <button
             onClick={() => setShowAdd(true)}
-            className="p-3 bg-purple-500 text-white rounded-xl hover:bg-purple-400 transition-colors"
+            className="p-2 bg-purple-500 text-white rounded-xl hover:bg-purple-400 transition-colors"
           >
             <Plus className="w-5 h-5" />
           </button>
+
+          <Link href="/" className="p-2 hover:bg-zinc-800 rounded-full transition-colors">
+            <Home className="w-5 h-5 text-zinc-400" />
+          </Link>
         </div>
       </header>
 
@@ -254,7 +262,7 @@ export default function HabitsPage() {
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 w-full max-w-sm space-y-4">
             <h3 className="text-lg font-bold">Novo Hábito</h3>
-            
+
             <input
               type="text"
               value={newHabit.name}
@@ -263,7 +271,7 @@ export default function HabitsPage() {
               className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white"
               autoFocus
             />
-            
+
             <input
               type="text"
               value={newHabit.category}
@@ -271,7 +279,7 @@ export default function HabitsPage() {
               placeholder="Categoria (ex: Saúde, Mente)"
               className="w-full bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-3 text-white"
             />
-            
+
             <div>
               <label className="text-xs text-zinc-500 block mb-2">Cor</label>
               <div className="flex gap-2">
@@ -285,7 +293,7 @@ export default function HabitsPage() {
                 ))}
               </div>
             </div>
-            
+
             <div className="flex gap-2">
               <button
                 onClick={() => setShowAdd(false)}
@@ -313,13 +321,13 @@ export default function HabitsPage() {
             <p className="text-2xl font-black text-white">{completedToday}/{totalHabits}</p>
             <p className="text-[10px] text-zinc-500 uppercase">Hoje</p>
           </div>
-          
+
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 text-center">
             <div className="text-2xl mb-1">📊</div>
             <p className="text-2xl font-black text-white">{completionRate}%</p>
             <p className="text-[10px] text-zinc-500 uppercase">Taxa</p>
           </div>
-          
+
           <div className="bg-zinc-900/50 border border-zinc-800 rounded-2xl p-4 text-center">
             <Flame className="w-5 h-5 mx-auto text-orange-400 mb-1" />
             <p className="text-2xl font-black text-white">

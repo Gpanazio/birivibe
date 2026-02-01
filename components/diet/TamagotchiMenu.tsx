@@ -122,7 +122,7 @@ export const TamagotchiMenu: React.FC<TamagotchiMenuProps> = ({
       todayStats: todayTotals,
       statusLabel
     };
-  }, [allLogs, goals, isOpen]); // Recalc when opening or logs change
+  }, [allLogs, goals]); // Recalc when logs or goals change
 
   // Animation loop
   useEffect(() => {
