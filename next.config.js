@@ -17,6 +17,9 @@ const nextConfig = {
 
   // Webpack config for Cloudflare compatibility
   webpack: (config, { isServer }) => {
+    // Enable WebAssembly support for Prisma
+    config.experiments = { ...config.experiments, asyncWebAssembly: true, layers: true };
+
     if (isServer) {
       // Exclude problematic packages from server bundle
       config.externals = config.externals || []
