@@ -17,14 +17,29 @@ const createBuildProxy = (): any => {
   });
 };
 
+import { PrismaD1 } from '@prisma/adapter-d1'
+import { getRequestContext } from '@cloudflare/next-on-pages'
+
 if (process.env.NODE_ENV === "production") {
-  // No Cloudflare, durante o build, o D1 não está disponível.
-  // Se tentarmos instanciar o PrismaClient sem DATABASE_URL, o build falha.
-  // Check if DATABASE_URL is present. If not, assume build phase or misconfiguration.
-  if (process.env.NEXT_PHASE === "phase-production-build" || !process.env.DATABASE_URL) {
-    prisma = createBuildProxy() as PrismaClient;
+  // Check if we are in the Edge Runtime
+  const isEdge = process.env.NEXT_RUNTIME === 'edge';
+
+  if (isEdge) {
+    try {
+      const adapter = new PrismaD1((getRequestContext().env as any).BIRILIFE)
+      prisma = new PrismaClient({ adapter })
+    } catch (e) {
+      // Fallback for build time or if getRequestContext fails
+      console.warn("Failed to initialize PrismaD1, falling back to proxy or default.", e)
+      prisma = createBuildProxy() as PrismaClient;
+    }
   } else {
-    prisma = new PrismaClient()
+    // Node.js runtime (or build)
+    if (process.env.NEXT_PHASE === "phase-production-build" || !process.env.DATABASE_URL) {
+      prisma = createBuildProxy() as PrismaClient;
+    } else {
+      prisma = new PrismaClient()
+    }
   }
 } else {
   if (!global.cachedPrisma) {

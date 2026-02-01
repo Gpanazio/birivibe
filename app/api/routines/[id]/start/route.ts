@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
 // POST /api/routines/[id]/start - inicia execução de rotina
 export async function POST(

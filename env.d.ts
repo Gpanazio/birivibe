@@ -3,7 +3,8 @@
 declare global {
   interface CloudflareEnv {
     DB: D1Database
+    BIRILIFE: D1Database
   }
 }
 
-export {}
+export { }

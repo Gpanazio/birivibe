@@ -28,8 +28,8 @@
     "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^3.3.4",
     "@next-auth/prisma-adapter": "^1.0.7",
-    "@prisma/adapter-d1": "^5.9.1",
-    "@prisma/client": "^5.9.1",
+    "@prisma/adapter-d1": "^5.22.0",
+    "@prisma/client": "^5.22.0",
     "@radix-ui/react-alert-dialog": "^1.0.5",
     "@radix-ui/react-avatar": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
@@ -85,7 +85,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.11",
-    "prisma": "^5.9.1",
+    "prisma": "^5.22.0",
     "ts-node": "^10.9.2",
     "wrangler": "^3.60.0"
   }

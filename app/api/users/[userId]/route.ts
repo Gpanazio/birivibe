@@ -5,7 +5,7 @@ import { z } from "zod"
 import { db } from "@/lib/db"
 import { userNameSchema } from "@/lib/validations/user"
 
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
 const routeContextSchema = z.object({
   params: z.object({

@@ -10,7 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { ActivityList } from "@/components/activity/activity-list"
 
 export const dynamic = 'force-dynamic';
-export const runtime = 'nodejs';
+export const runtime = 'edge';
 
 export const metadata: Metadata = {
   title: "BiriSims Cockpit",
