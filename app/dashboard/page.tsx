@@ -35,9 +35,18 @@ function NeedsBar({ label, value, colorClass }: { label: string, value: number, 
 }
 
 export default async function Dashboard({ searchParams }: { searchParams: { from: string; to: string } }) {
-  let user = { id: "", name: "Gabriel", email: "gabriel@birivibe.com" } as any;
-  const firstUser = await prisma.user.findFirst();
-  if (firstUser) user = { id: firstUser.id, name: firstUser.name, email: firstUser.email } as any;
+  // Busca ou cria usuário padrão
+  let user = await prisma.user.findFirst();
+  if (!user) {
+    user = await prisma.user.create({
+      data: {
+        name: "Gabriel",
+        email: "gabriel@birivibe.com",
+        timezone: "America/Sao_Paulo",
+      }
+    });
+    console.log("✅ Usuário Gabriel criado automaticamente no dashboard");
+  }
 
   const dateRange = dateRangeParams(searchParams)
   const data = await getDashboardData(user.id, dateRange)

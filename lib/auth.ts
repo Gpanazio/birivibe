@@ -4,6 +4,23 @@ import CredentialsProvider from "next-auth/providers/credentials"
 
 import { db } from "@/lib/db"
 
+// Função helper para garantir que existe um usuário no BD
+async function ensureDefaultUser() {
+  let user = await db.user.findFirst();
+  if (!user) {
+    // Cria usuário padrão Gabriel se não existir
+    user = await db.user.create({
+      data: {
+        name: "Gabriel",
+        email: "gabriel@birivibe.com",
+        timezone: "America/Sao_Paulo",
+      }
+    });
+    console.log("✅ Usuário padrão Gabriel criado automaticamente");
+  }
+  return user;
+}
+
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   session: {
@@ -13,16 +30,18 @@ export const authOptions: NextAuthOptions = {
     signIn: "/signin",
   },
   providers: [
-    // Auth simplificado por enquanto - pega primeiro usuário
+    // Login direto - cria/usa usuário Gabriel automaticamente
     CredentialsProvider({
-      name: "Dev",
+      name: "Entrar",
       credentials: {},
       async authorize() {
-        const user = await db.user.findFirst();
-        if (user) {
+        try {
+          const user = await ensureDefaultUser();
           return { id: user.id, name: user.name, email: user.email };
+        } catch (error) {
+          console.error("❌ Erro ao autenticar:", error);
+          return null;
         }
-        return null;
       },
     }),
   ],
@@ -38,24 +57,22 @@ export const authOptions: NextAuthOptions = {
       return session
     },
     async jwt({ token, user }) {
-      const dbUser = await db.user.findFirst({
-        where: {
-          email: token.email,
-        },
-      })
-
-      if (!dbUser) {
+      try {
+        // Busca ou cria usuário
+        const dbUser = await ensureDefaultUser();
+        
+        return {
+          id: dbUser.id,
+          name: dbUser.name,
+          email: dbUser.email,
+          picture: dbUser.image,
+        }
+      } catch (error) {
+        console.error("❌ Erro no JWT callback:", error);
         if (user) {
           token.id = user?.id
         }
         return token
-      }
-
-      return {
-        id: dbUser.id,
-        name: dbUser.name,
-        email: dbUser.email,
-        picture: dbUser.image,
       }
     },
   },
