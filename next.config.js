@@ -12,7 +12,13 @@ const nextConfig = {
   // Forçar o Next.js a não usar o Edge em páginas que ele acha que deve
   // se elas estiverem quebrando o build.
   experimental: {
-    serverComponentsExternalPackages: ['@prisma/client', 'crypto'],
+    serverComponentsExternalPackages: ['@prisma/client'],
+  },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push('crypto', 'http', 'https', 'querystring');
+    }
+    return config;
   },
 };
 

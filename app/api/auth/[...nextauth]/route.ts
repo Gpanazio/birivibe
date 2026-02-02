@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 import { authOptions } from "@/lib/auth"

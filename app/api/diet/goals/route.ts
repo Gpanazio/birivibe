@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 
 export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 // GET /api/diet/goals - busca metas do usuário
 export async function GET(req: NextRequest) {

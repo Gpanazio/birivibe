@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 
 export const dynamic = 'force-dynamic';
-export const runtime = 'edge';
+export const runtime = 'nodejs';
 
 // Type for Goal with its children relation
 type GoalWithChildren = Goal & { children?: Goal[] };
