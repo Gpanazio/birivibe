@@ -1,4 +1,6 @@
 import Link from "next/link"
+import { cn } from "@/lib/utils"
+import { buttonVariants } from "@/components/ui/button"
 import {
   Brain,
   Calendar,
@@ -81,7 +83,18 @@ const MODULES = [
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-black text-white relative">
+      <div className="absolute top-6 right-6 z-10">
+        <Link
+          href="/signin"
+          className={cn(
+            buttonVariants({ variant: "ghost", size: "sm" }),
+            "text-zinc-500 hover:text-white transition-colors"
+          )}
+        >
+          Entrar
+        </Link>
+      </div>
       {/* Hero */}
       <div className="px-6 pb-12 pt-16 text-center">
         <h1 className="mb-2 text-5xl font-black tracking-tighter">
@@ -138,10 +151,16 @@ export default function HomePage() {
         </div>
 
         {/* Footer */}
-        <div className="mt-12 text-center">
+        <div className="mt-12 text-center flex flex-col items-center gap-3">
           <p className="text-xs text-zinc-700">
             BiriVibe OS v0.1.0 • Brick × Douglas
           </p>
+          <Link
+            href="/api/init"
+            className="text-[10px] text-zinc-900 hover:text-zinc-700 transition-colors uppercase tracking-widest"
+          >
+            System Check
+          </Link>
         </div>
       </main>
     </div>
