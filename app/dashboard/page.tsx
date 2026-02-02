@@ -1,10 +1,7 @@
 import { Metadata } from "next"
-import { redirect } from "next/navigation"
 
 import { db as prisma } from "@/lib/db"
 import { getDashboardData } from "@/lib/api/dashboard"
-import { authOptions } from "@/lib/auth"
-import { getCurrentUser } from "@/lib/session"
 import { dateRangeParams } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ActivityList } from "@/components/activity/activity-list"
@@ -34,100 +31,138 @@ function NeedsBar({ label, value, colorClass }: { label: string, value: number, 
   )
 }
 
-export default async function Dashboard({ searchParams }: { searchParams: { from: string; to: string } }) {
-  // Busca ou cria usuário padrão
-  let user = await prisma.user.findFirst();
-  if (!user) {
-    user = await prisma.user.create({
-      data: {
-        name: "Gabriel",
-        email: "gabriel@birivibe.com",
-        timezone: "America/Sao_Paulo",
-      }
-    });
-    console.log("✅ Usuário Gabriel criado automaticamente no dashboard");
-  }
-
-  const dateRange = dateRangeParams(searchParams)
-  const data = await getDashboardData(user.id, dateRange)
-
-  const safeActivities = data.userActivities.map((a: any) => ({
-    ...a,
-    colorCode: a.color || "#8b5cf6",
-  }))
-
+// Componente de Fallback quando BD não conectar
+function DashboardError({ error }: { error: string }) {
   return (
-    <div className="max-w-4xl mx-auto space-y-10 py-4">
-      {/* HEADER SIMS STYLE */}
-      <div className="flex justify-between items-start border-b border-zinc-900 pb-6">
-        <div>
-          <h1 className="text-3xl font-black tracking-tighter text-white italic">BIRI_SIMS<span className="text-purple-500">.V1</span></h1>
-          <div className="flex gap-2 mt-2">
-            <span className="px-2 py-0.5 bg-green-900/30 text-green-500 text-[9px] font-bold rounded border border-green-800/50 uppercase">● Sistema_Estável</span>
-            <span className="px-2 py-0.5 bg-purple-900/30 text-purple-500 text-[9px] font-bold rounded border border-purple-800/50 uppercase">● Douglas_Online</span>
-          </div>
+    <div className="max-w-2xl mx-auto py-12 px-4">
+      <div className="bg-red-950/30 border border-red-800 rounded-xl p-8 text-center">
+        <h1 className="text-2xl font-black text-red-500 mb-4">⚠️ Erro de Conexão</h1>
+        <p className="text-zinc-400 mb-6">
+          Não foi possível conectar ao banco de dados. Verifique as configurações do Railway.
+        </p>
+        <div className="bg-zinc-900 rounded p-4 text-left mb-6">
+          <code className="text-xs text-red-400 break-all">{error}</code>
         </div>
-        <div className="text-right">
-          <p className="terminal-font text-xs text-zinc-500 uppercase">Status do Jogador</p>
-          <p className="text-xl font-black text-white uppercase">{user.name.split(' ')[0]}</p>
+        <div className="space-y-2 text-left text-sm text-zinc-500">
+          <p><strong className="text-zinc-300">Passos para corrigir:</strong></p>
+          <ol className="list-decimal list-inside space-y-1">
+            <li>Verifique se <code className="text-purple-400">DATABASE_URL</code> está configurada no Railway</li>
+            <li>Acesse <code className="text-purple-400">/api/init</code> para diagnosticar</li>
+            <li>Verifique os logs do Railway para mais detalhes</li>
+          </ol>
         </div>
-      </div>
-
-      {/* AS BARRAS DE NECESSIDADE (NEEDS) */}
-      <div className="grid gap-6 md:grid-cols-2 bg-zinc-950/50 border border-zinc-900 p-6 rounded-xl shadow-2xl">
-        <div className="space-y-4">
-          <NeedsBar label="Energia (Sono)" value={data.needs.energy} colorClass="bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-          <NeedsBar label="Físico (Treino)" value={data.needs.fitness} colorClass="bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
-          <NeedsBar label="Mente (Humor)" value={data.needs.mind} colorClass="bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]" />
-        </div>
-        <div className="space-y-4">
-          <NeedsBar label="Capital (Grana)" value={data.needs.capital} colorClass="bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
-          <NeedsBar label="Social (Consistência)" value={data.needs.overall} colorClass="bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
-          <div className="pt-2">
-            <div className="flex items-center gap-2 px-3 py-2 bg-zinc-900 rounded border border-zinc-800">
-              <span className="animate-pulse text-purple-500">✦</span>
-              <p className="text-[10px] text-zinc-400 font-medium italic truncate">
-                {`"O jogador parece focado, mas a barra de capital está sofrendo."`}
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* LISTA DE ATIVIDADES & LOGS */}
-      <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-1 border border-zinc-900 bg-zinc-950/50 rounded-xl overflow-hidden">
-          <div className="p-4 border-b border-zinc-900 bg-zinc-900/30">
-            <h3 className="terminal-font text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Rotina Diária</h3>
-          </div>
-          <ScrollArea className="h-[350px]">
-            <ActivityList activities={safeActivities} />
-          </ScrollArea>
-        </div>
-
-        <div className="md:col-span-2 space-y-6">
-          <div className="border border-zinc-900 bg-zinc-950/50 rounded-xl p-6">
-            <h3 className="terminal-font text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-4">Buffs Ativos (Logs de Hoje)</h3>
-            <div className="flex flex-wrap gap-2">
-              {data.logs.slice(0, 8).map((log: any, i: number) => (
-                <span key={i} className="px-3 py-1 bg-zinc-900 text-zinc-300 text-[10px] font-bold rounded-full border border-zinc-800">
-                  +{log.habit?.name || "Registro"}
-                </span>
-              ))}
-              {data.logs.length === 0 && <span className="text-zinc-700 text-[10px] italic underline">Nenhum buff ativo. Vá trabalhar.</span>}
-            </div>
-          </div>
-
-          <div className="border border-zinc-900 bg-zinc-950/50 rounded-xl p-6 relative overflow-hidden group cursor-pointer hover:border-purple-500 transition-colors">
-            <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-100 transition-opacity">
-              <span className="text-[40px]">⌨️</span>
-            </div>
-            <h3 className="terminal-font text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">Console de Comando</h3>
-            <p className="text-lg font-bold text-white mb-4">Daily Dump</p>
-            <a href="/biri" className="inline-block px-4 py-2 bg-purple-600 text-white text-[10px] font-black rounded uppercase hover:bg-purple-500">Abrir_Terminal</a>
-          </div>
-        </div>
+        <a
+          href="/api/init"
+          className="inline-block mt-6 px-6 py-3 bg-purple-600 text-white font-bold rounded hover:bg-purple-500"
+        >
+          Verificar Conexão BD
+        </a>
       </div>
     </div>
   )
 }
+
+export default async function Dashboard({ searchParams }: { searchParams: { from: string; to: string } }) {
+  try {
+    // Busca ou cria usuário padrão
+    let user = await prisma.user.findFirst();
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          name: "Gabriel",
+          email: "gabriel@birivibe.com",
+          timezone: "America/Sao_Paulo",
+        }
+      });
+      console.log("✅ Usuário Gabriel criado automaticamente no dashboard");
+    }
+
+    const dateRange = dateRangeParams(searchParams)
+    const data = await getDashboardData(user.id, dateRange)
+
+    const safeActivities = data.userActivities.map((a: any) => ({
+      ...a,
+      colorCode: a.color || "#8b5cf6",
+    }))
+
+    return (
+      <div className="max-w-4xl mx-auto space-y-10 py-4">
+        {/* HEADER SIMS STYLE */}
+        <div className="flex justify-between items-start border-b border-zinc-900 pb-6">
+          <div>
+            <h1 className="text-3xl font-black tracking-tighter text-white italic">BIRI_SIMS<span className="text-purple-500">.V1</span></h1>
+            <div className="flex gap-2 mt-2">
+              <span className="px-2 py-0.5 bg-green-900/30 text-green-500 text-[9px] font-bold rounded border border-green-800/50 uppercase">● Sistema_Estável</span>
+              <span className="px-2 py-0.5 bg-purple-900/30 text-purple-500 text-[9px] font-bold rounded border border-purple-800/50 uppercase">● Douglas_Online</span>
+            </div>
+          </div>
+          <div className="text-right">
+            <p className="terminal-font text-xs text-zinc-500 uppercase">Status do Jogador</p>
+            <p className="text-xl font-black text-white uppercase">{user.name?.split(' ')[0] || 'Gabriel'}</p>
+          </div>
+        </div>
+
+        {/* AS BARRAS DE NECESSIDADE (NEEDS) */}
+        <div className="grid gap-6 md:grid-cols-2 bg-zinc-950/50 border border-zinc-900 p-6 rounded-xl shadow-2xl">
+          <div className="space-y-4">
+            <NeedsBar label="Energia (Sono)" value={data.needs.energy} colorClass="bg-yellow-500 shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
+            <NeedsBar label="Físico (Treino)" value={data.needs.fitness} colorClass="bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]" />
+            <NeedsBar label="Mente (Humor)" value={data.needs.mind} colorClass="bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.5)]" />
+          </div>
+          <div className="space-y-4">
+            <NeedsBar label="Capital (Grana)" value={data.needs.capital} colorClass="bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" />
+            <NeedsBar label="Social (Consistência)" value={data.needs.overall} colorClass="bg-purple-500 shadow-[0_0_10px_rgba(168,85,247,0.5)]" />
+            <div className="pt-2">
+              <div className="flex items-center gap-2 px-3 py-2 bg-zinc-900 rounded border border-zinc-800">
+                <span className="animate-pulse text-purple-500">✦</span>
+                <p className="text-[10px] text-zinc-400 font-medium italic truncate">
+                  {`"O jogador parece focado, mas a barra de capital está sofrendo."`}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* LISTA DE ATIVIDADES & LOGS */}
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="md:col-span-1 border border-zinc-900 bg-zinc-950/50 rounded-xl overflow-hidden">
+            <div className="p-4 border-b border-zinc-900 bg-zinc-900/30">
+              <h3 className="terminal-font text-[10px] text-zinc-500 uppercase font-bold tracking-widest">Rotina Diária</h3>
+            </div>
+            <ScrollArea className="h-[350px]">
+              <ActivityList activities={safeActivities} />
+            </ScrollArea>
+          </div>
+
+          <div className="md:col-span-2 space-y-6">
+            <div className="border border-zinc-900 bg-zinc-950/50 rounded-xl p-6">
+              <h3 className="terminal-font text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-4">Buffs Ativos (Logs de Hoje)</h3>
+              <div className="flex flex-wrap gap-2">
+                {data.logs.slice(0, 8).map((log: any, i: number) => (
+                  <span key={i} className="px-3 py-1 bg-zinc-900 text-zinc-300 text-[10px] font-bold rounded-full border border-zinc-800">
+                    +{log.habit?.name || "Registro"}
+                  </span>
+                ))}
+                {data.logs.length === 0 && <span className="text-zinc-700 text-[10px] italic underline">Nenhum buff ativo. Vá trabalhar.</span>}
+              </div>
+            </div>
+
+            <div className="border border-zinc-900 bg-zinc-950/50 rounded-xl p-6 relative overflow-hidden group cursor-pointer hover:border-purple-500 transition-colors">
+              <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-100 transition-opacity">
+                <span className="text-[40px]">⌨️</span>
+              </div>
+              <h3 className="terminal-font text-[10px] text-zinc-500 uppercase font-bold tracking-widest mb-1">Console de Comando</h3>
+              <p className="text-lg font-bold text-white mb-4">Daily Dump</p>
+              <a href="/biri" className="inline-block px-4 py-2 bg-purple-600 text-white text-[10px] font-black rounded uppercase hover:bg-purple-500">Abrir_Terminal</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : "Erro desconhecido ao carregar dashboard";
+    console.error("❌ Dashboard Error:", errorMessage);
+    return <DashboardError error={errorMessage} />;
+  }
+}
+
