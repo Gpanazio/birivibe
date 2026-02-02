@@ -3,7 +3,6 @@ builder = "nixpacks"
 
 [phases.setup]
 nixPkgs = ["nodejs_20", "npm-10_x"]
-cmds = ["npm install -g npm@10"]
 
 [phases.install]
 cmds = ["npm ci"]
