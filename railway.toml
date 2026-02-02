@@ -1,0 +1,19 @@
+[build]
+builder = "nixpacks"
+
+[deploy]
+startCommand = "npm run start"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+
+[phases.build]
+cmds = [
+  "npm install",
+  "npx prisma generate",
+  "npm run build"
+]

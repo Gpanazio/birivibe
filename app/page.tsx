@@ -1,115 +1,120 @@
-"use client";
-
-import Link from "next/link";
-import { 
-  Utensils, CheckSquare, Calendar, Target, 
-  RefreshCw, Settings, LayoutDashboard, Dumbbell,
-  Moon, Brain
-} from "lucide-react";
+import Link from "next/link"
+import {
+  Brain,
+  Calendar,
+  CheckSquare,
+  Dumbbell,
+  LayoutDashboard,
+  Moon,
+  RefreshCw,
+  Settings,
+  Target,
+  Utensils,
+} from "lucide-react"
 
 const MODULES = [
-  { 
-    href: "/dashboard", 
-    name: "Dashboard", 
+  {
+    href: "/dashboard",
+    name: "Dashboard",
     desc: "Visão geral estilo Sims",
     icon: LayoutDashboard,
     color: "#8b5cf6",
-    emoji: "🎮"
+    emoji: "🎮",
   },
-  { 
-    href: "/diet", 
-    name: "Dieta", 
+  {
+    href: "/diet",
+    name: "Dieta",
     desc: "Nutrição e macros",
     icon: Utensils,
     color: "#84cc16",
-    emoji: "🥗"
+    emoji: "🥗",
   },
-  { 
-    href: "/habits", 
-    name: "Hábitos", 
+  {
+    href: "/habits",
+    name: "Hábitos",
     desc: "Tracking diário",
     icon: CheckSquare,
     color: "#8b5cf6",
-    emoji: "✓"
+    emoji: "✓",
   },
-  { 
-    href: "/routines", 
-    name: "Rotinas", 
+  {
+    href: "/routines",
+    name: "Rotinas",
     desc: "Sequências de passos",
     icon: Calendar,
     color: "#8b5cf6",
-    emoji: "🌅"
+    emoji: "🌅",
   },
-  { 
-    href: "/goals", 
-    name: "Objetivos", 
+  {
+    href: "/goals",
+    name: "Objetivos",
     desc: "Metas e progresso",
     icon: Target,
     color: "#eab308",
-    emoji: "🎯"
+    emoji: "🎯",
   },
-  { 
-    href: "/rituals", 
-    name: "Rituais", 
+  {
+    href: "/rituals",
+    name: "Rituais",
     desc: "Reviews periódicos",
     icon: RefreshCw,
     color: "#06b6d4",
-    emoji: "🔄"
+    emoji: "🔄",
   },
-  { 
-    href: "/biri", 
-    name: "Daily Dump", 
+  {
+    href: "/biri",
+    name: "Daily Dump",
     desc: "Input via Douglas",
     icon: Brain,
     color: "#8b5cf6",
-    emoji: "🧠"
+    emoji: "🧠",
   },
-  { 
-    href: "/settings", 
-    name: "Configurações", 
+  {
+    href: "/settings",
+    name: "Configurações",
     desc: "Contextos e automações",
     icon: Settings,
     color: "#6b7280",
-    emoji: "⚙️"
+    emoji: "⚙️",
   },
-];
+]
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-black text-white">
       {/* Hero */}
-      <div className="px-6 pt-16 pb-12 text-center">
-        <h1 className="text-5xl font-black tracking-tighter mb-2">
+      <div className="px-6 pb-12 pt-16 text-center">
+        <h1 className="mb-2 text-5xl font-black tracking-tighter">
           BIRI<span className="text-purple-400">VIBE</span>
         </h1>
-        <p className="text-zinc-500 text-sm uppercase tracking-widest">
+        <p className="text-sm uppercase tracking-widest text-zinc-500">
           Life Operating System
         </p>
-        
-        <div className="mt-6 inline-flex items-center gap-2 px-4 py-2 bg-zinc-900 rounded-full">
-          <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+
+        <div className="mt-6 inline-flex items-center gap-2 rounded-full bg-zinc-900 px-4 py-2">
+          <div className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
           <span className="text-xs text-zinc-400">Douglas Online</span>
         </div>
       </div>
 
       {/* Modules Grid */}
-      <main className="max-w-2xl mx-auto px-4 pb-12">
+      <main className="mx-auto max-w-2xl px-4 pb-12">
         <div className="grid grid-cols-2 gap-3">
           {MODULES.map((module) => (
             <Link
               key={module.href}
               href={module.href}
-              className="group relative bg-zinc-900/50 border border-zinc-800 rounded-2xl p-5 hover:border-zinc-700 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="group relative rounded-2xl border border-zinc-800 bg-zinc-900/50 p-5 transition-all hover:scale-[1.02] hover:border-zinc-700 active:scale-[0.98]"
               style={{ borderLeftColor: module.color, borderLeftWidth: 3 }}
             >
-              <div className="text-3xl mb-3">{module.emoji}</div>
-              <h3 className="font-bold text-white mb-1">{module.name}</h3>
+              <div className="mb-3 text-3xl">{module.emoji}</div>
+              <h3 className="mb-1 font-bold text-white">{module.name}</h3>
               <p className="text-xs text-zinc-500">{module.desc}</p>
-              
-              <div 
-                className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
-                style={{ 
-                  background: `linear-gradient(135deg, ${module.color}10 0%, transparent 50%)`
+
+              <div
+                className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 transition-opacity group-hover:opacity-100"
+                style={{
+                  background: `linear-gradient(135deg, ${module.color}10 0%, transparent 50%)`,
                 }}
               />
             </Link>
@@ -118,17 +123,17 @@ export default function HomePage() {
 
         {/* Quick Stats */}
         <div className="mt-8 grid grid-cols-3 gap-3">
-          <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-4 text-center">
+          <div className="rounded-xl border border-zinc-800/50 bg-zinc-900/30 p-4 text-center">
             <p className="text-2xl font-black text-white">—</p>
-            <p className="text-[10px] text-zinc-500 uppercase">Streak</p>
+            <p className="text-[10px] uppercase text-zinc-500">Streak</p>
           </div>
-          <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-4 text-center">
+          <div className="rounded-xl border border-zinc-800/50 bg-zinc-900/30 p-4 text-center">
             <p className="text-2xl font-black text-white">—</p>
-            <p className="text-[10px] text-zinc-500 uppercase">Hoje</p>
+            <p className="text-[10px] uppercase text-zinc-500">Hoje</p>
           </div>
-          <div className="bg-zinc-900/30 border border-zinc-800/50 rounded-xl p-4 text-center">
+          <div className="rounded-xl border border-zinc-800/50 bg-zinc-900/30 p-4 text-center">
             <p className="text-2xl font-black text-white">—</p>
-            <p className="text-[10px] text-zinc-500 uppercase">XP</p>
+            <p className="text-[10px] uppercase text-zinc-500">XP</p>
           </div>
         </div>
 
@@ -140,5 +145,5 @@ export default function HomePage() {
         </div>
       </main>
     </div>
-  );
+  )
 }
